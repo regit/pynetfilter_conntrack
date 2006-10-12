@@ -10,6 +10,9 @@ except ImportError:
 VERSION = '0.1'
 DESCRIPTION = "pynetfilter_conntrack is a Python binding of libnetfilter_conntrack"
 LONG_DESCRIPTION = open("README").read()
+URL = "http://software.inl.fr/trac/trac.cgi/wiki/pynetfilter_conntrack"
+KEYWORDS = "netfilter conntrack ctypes firewall"
+REQUIRES = ("ctypes>=0.9.6", "IPy>=0.42")
 
 CLASSIFIERS = filter(None, map(str.strip,
 """
@@ -29,6 +32,7 @@ Topic :: System :: Networking :: Monitoring
 option = {}
 if use_setuptools:
     option["zip_safe"] = True
+    option["install_requires"] = REQUIRES
 
 setup(
     name="pynetfilter_conntrack",
@@ -38,8 +42,10 @@ setup(
     classifiers=CLASSIFIERS,
     author="Victor Stinner",
     author_email="victor.stinner AT inl.fr",
-    url="http://software.inl.fr/trac/trac.cgi/wiki/pynetfilter_conntrack",
+    url=URL,
+    download_url=URL,
     license="GNU GPL",
+    keywords=KEYWORDS,
     packages=["pynetfilter_conntrack"],
     platforms=['Linux'],
     package_dir={'pynetfilter_conntrack': 'pynetfilter_conntrack'},
