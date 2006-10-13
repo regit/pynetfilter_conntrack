@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 ---
 conntrack.py is a clone of conntrack program (written in C)
 """
-from pynetfilter_conntrack import (NetfilterConntrack, CONNTRACK,
-    L3PROTONUM_REVERSE_NAMES, IPPROTO_REVERSE_NAMES)
+from pynetfilter_conntrack import NetfilterConntrack, CONNTRACK, \
+    L3PROTONUM_REVERSE_NAMES, IPPROTO_REVERSE_NAMES
 from optparse import OptionGroup, OptionParser
 from IPy import IP
 import sys

@@ -19,10 +19,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 pynetfilter_conntrack is a Python binding of libnetfilter_conntrack:
    http://www.netfilter.org/projects/libnetfilter_conntrack/index.html
 """
-from ctypes import (Union, Structure,
-    POINTER, CFUNCTYPE, cast,
-    c_char_p, c_void_p, c_int, c_uint,
-    sizeof, byref, create_string_buffer, cdll)
+from ctypes import Union, Structure, \
+    POINTER, CFUNCTYPE, cast, \
+    c_char_p, c_void_p, c_int, c_uint, \
+    sizeof, byref, create_string_buffer, cdll
 from pynetfilter_conntrack.ctypes_stdint import uint8_t, uint16_t, uint32_t, uint64_t
 from pynetfilter_conntrack.tools import ctypes_copy, reverse_dict
 from socket import ntohs, htons, ntohl, AF_INET, AF_INET6
@@ -592,15 +592,4 @@ class NetfilterConntrack(object):
         # is raised in constructor)
         if hasattr(self, "handler"):
             nfct_close(self.handler)
-
-if __name__ == "__main__":
-    import doctest
-    import sys
-    print "Run documentation tests"
-    failure, tests = doctest.testmod()
-    if failure:
-        sys.exit(1)
-    else:
-        print "Everything is ok"
-        sys.exit(0)
 

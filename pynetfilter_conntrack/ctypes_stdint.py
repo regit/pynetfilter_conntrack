@@ -1,9 +1,9 @@
-from ctypes import (sizeof,
-    c_byte, c_ubyte,
-    c_short, c_ushort,
-    c_int, c_uint,
-    c_long, c_ulong,
-    c_longlong, c_ulonglong)
+from ctypes import sizeof, \
+    c_byte, c_ubyte, \
+    c_short, c_ushort, \
+    c_int, c_uint, \
+    c_long, c_ulong, \
+    c_longlong, c_ulonglong
 
 #------------- ctypes types: uint8_t, int16_t, size_t, ... ---------------
 

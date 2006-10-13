@@ -19,7 +19,10 @@ def reverse_dict(d):
     >>> reverse_dict(d)
     {1: 'one', 2: 'two'}
     """
-    return dict( (value, key) for key, value in d.iteritems() )
+    r = dict()
+    for key, value in d.iteritems():
+        r[value] = key
+    return r
 
 def humanDuration(second):
     """

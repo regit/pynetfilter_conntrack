@@ -19,3 +19,16 @@ For all commands, you can filter connections with:
  * source/destination port from original/reply destination (protocols tcp,
    udp and sctp).
 
+Dependencies
+============
+
+Python module depends on:
+ * IPy: http://c0re.23.nu/c0de/IPy/
+ * ctypes: http://starship.python.net/crew/theller/ctypes/
+
+But you also need C library with Linux kernel 2.6.14+:
+http://www.netfilter.org/projects/libnetfilter_conntrack/index.html
+
+Get more information at:
+http://software.inl.fr/trac/trac.cgi/wiki/pynetfilter_conntrack
+
