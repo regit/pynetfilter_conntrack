@@ -37,13 +37,13 @@ def parseOptions():
 
     # Filter on IP
     common.add_option("-s", "--orig-src", help="Source address from original direction",
-        action="store", type="str", default=None)
+        action="store", type="string", default=None)
     common.add_option("-d", "--orig-dst", help="Destination address from original direction",
-        action="store", type="str", default=None)
+        action="store", type="string", default=None)
     common.add_option("-r", "--reply-src", help="Source address from reply direction",
-        action="store", type="str", default=None)
+        action="store", type="string", default=None)
     common.add_option("-q", "--reply-dst", help="Destination address from reply direction",
-        action="store", type="str", default=None)
+        action="store", type="string", default=None)
 
 
     # Filter on port
@@ -56,9 +56,9 @@ def parseOptions():
     common.add_option("--reply-dst-port", help="Destination port from reply direction",
         action="store", type="int", default=None)
     common.add_option("-p", "--protonum", help="Layer 4 Protocol, eg. 'udp' (default: tcp)",
-        action="store", type="str", default="tcp")
+        action="store", type="string", default="tcp")
     common.add_option("-f", "--family", help="Layer 3 Protocol, eg. 'ipv6' (default: ipv4)",
-        action="store", type="str", default="ipv4")
+        action="store", type="string", default="ipv4")
     parser.add_option_group(common)
 
     # Parse options
