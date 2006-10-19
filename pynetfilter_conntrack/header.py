@@ -27,6 +27,7 @@ from pynetfilter_conntrack.ctypes_stdint import uint8_t, uint16_t, uint32_t, uin
 from pynetfilter_conntrack.tools import ctypes_copy, reverse_dict
 from socket import ntohs, htons, ntohl, AF_INET, AF_INET6
 from IPy import IP
+from cElementTree import Element, SubElement
 import types
 
 # ------------------------------- Constants ------------------------------
@@ -200,6 +201,14 @@ class nfct_address(Union):
     def getIPv6(self):
         # TODO: Write the function!
         raise NotImplementedError()
+    
+    def getIP(self, protonum):
+        if protonum == AF_INET:
+            return self.getIPv4()
+        elif protonum == AF_INET6:
+            return self.getIPv6()
+        else:
+            raise NotImplementedError()
 
 class nfct_tuple(Structure):
     """
@@ -266,6 +275,35 @@ class nfct_conntrack(Structure):
         ("protoinfo", nfct_protoinfo),
         ("counters", nfct_counters * NFCT_DIR_MAX),
         ("nat", nfct_nat))
+
+    def xmlize(self):
+        root = Element("conntrack", id = str(self.id),\
+                                    mark = str(self.mark),\
+                                    use = str(self.use),\
+                                    timeout = str(self.timeout))
+        
+        # Write status
+        status = SubElement(root, "status")
+        flags = [ name for mask, name in IPS_NAMES if self.status & mask ]
+        for flag in flags:
+            SubElement(status, "flag").text = str(flag)
+        
+        # Write tuples (+ counters)
+        for i in range(NFCT_DIR_MAX):
+            t = self.tuple[i]
+            tuple = SubElement(root, "tuple", direction = str(i))
+            SubElement(tuple, "protocol", layer = "3").text = str(t.l3protonum)
+            SubElement(tuple, "protocol", layer = "4").text = str(t.protonum)
+            SubElement(tuple, "socket", type = "source", \
+                                        ip = str(t.src.getIP(t.l3protonum)), \
+                                        port = str(t.l4src.tcp.port))
+            SubElement(tuple, "socket", type = "destination", \
+                                        ip = str(t.dst.getIP(t.l3protonum)), \
+                                        port = str(t.l4dst.tcp.port))
+            # counters
+            SubElement(tuple, "packets").text = str(self.counters[i].packets)
+            SubElement(tuple, "bytes").text = str(self.counters[i].bytes)
+        return root
 
     def write_xml(self, output, indent):
         # Write attributes
