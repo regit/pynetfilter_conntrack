@@ -27,7 +27,10 @@ from pynetfilter_conntrack.ctypes_stdint import uint8_t, uint16_t, uint32_t, uin
 from pynetfilter_conntrack.tools import ctypes_copy, reverse_dict
 from socket import ntohs, htons, ntohl, AF_INET, AF_INET6
 from IPy import IP
-from cElementTree import Element, SubElement
+try:
+    from cElementTree import Element, SubElement
+except ImportError:
+    from elementtree.ElementTree import Element, SubElement
 import types
 
 # ------------------------------- Constants ------------------------------
