@@ -204,7 +204,7 @@ class nfct_address(Union):
     def getIPv6(self):
         # TODO: Write the function!
         raise NotImplementedError()
-    
+
     def getIP(self, protonum):
         if protonum == AF_INET:
             return self.getIPv4()
@@ -284,13 +284,13 @@ class nfct_conntrack(Structure):
                                     mark = str(self.mark),\
                                     use = str(self.use),\
                                     timeout = str(self.timeout))
-        
+
         # Write status
         status = SubElement(root, "status")
         flags = [ name for mask, name in IPS_NAMES if self.status & mask ]
         for flag in flags:
             SubElement(status, "flag").text = str(flag)
-        
+
         # Write tuples (+ counters)
         for i in range(NFCT_DIR_MAX):
             t = self.tuple[i]
@@ -368,7 +368,7 @@ class nfct_conntrack(Structure):
         if length:
             return buffer.value
         else:
-            raise RuntimeError("sprintf_conntrack failure (%s)." % ok)
+            raise RuntimeError("sprintf_conntrack failure.")
 
 class nfct_conntrack_compare(Structure):
     _fields_ = (
@@ -494,7 +494,7 @@ class ConntrackTable:
             entry.write_xml(output, indent)
         output.write('</conntracks>\n')
 
-    def display(self, full=False):
+    def display(self):
         "Display connections to stdout"
         for entry in self:
             print entry
@@ -523,11 +523,11 @@ class ConntrackTable:
             if self.family == AF_INET6:
                 if orig_src and orig.src.getIPv6() not in orig_src:
                     continue
-                if orig_dst and orig.dst.getIPv6() not in orig_st:
+                if orig_dst and orig.dst.getIPv6() not in orig_dst:
                     continue
                 if reply_src and reply.src.getIPv6() not in reply_src:
                     continue
-                if reply_dst and reply.dst.getIPv6() not in reply_st:
+                if reply_dst and reply.dst.getIPv6() not in reply_dst:
                     continue
             else:
                 if orig_src and orig.src.getIPv4() not in orig_src:

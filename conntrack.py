@@ -23,7 +23,6 @@ from pynetfilter_conntrack import NetfilterConntrack, CONNTRACK, \
 from optparse import OptionGroup, OptionParser
 from IPy import IP
 import sys
-import types
 
 def parseOptions():
     parser = OptionParser(usage="%prog [options] list|xml|delete")
