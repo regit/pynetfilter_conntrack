@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 Copyright(C) 2006 INL
-Written by Victor Stinner <victor.stinner@inl.fr>
+Written by Victor Stinner <victor.stinner AT inl.fr>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
