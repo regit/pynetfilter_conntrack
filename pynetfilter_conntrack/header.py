@@ -620,12 +620,15 @@ class NetfilterConntrack(object):
         return table
 
     def update_conntrack(self, entry):
-        "Update a conntrack entry"
-        nfct_update_conntrack(self.handler, entry)
+        """Update a conntrack entry
+        @type entry: nfct_conntrack"""
+        nfct_update_conntrack(self.handler, byref(entry))
 
     def delete_conntrack(self, entry):
-        "Delete a conntrack entry"
-        nfct_delete_conntrack(self.handler, entry.tuple[0], NFCT_DIR_ORIGINAL, entry.id)
+        """Delete a conntrack entry
+        @type entry: nfct_conntrack
+        """
+        nfct_delete_conntrack(self.handler, byref(entry.tuple[0]), NFCT_DIR_ORIGINAL, entry.id)
 
     def __del__(self):
         "Close the netfilter handler"
