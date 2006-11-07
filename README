@@ -23,7 +23,7 @@ Dependencies
 ============
 
 Python module depends on:
- * IPy: http://c0re.23.nu/c0de/IPy/
+ * IPy: http://software.inl.fr/trac/trac.cgi/wiki/IPy
  * ctypes: http://starship.python.net/crew/theller/ctypes/
 
 But you also need C library with Linux kernel 2.6.14+:
@@ -32,3 +32,14 @@ http://www.netfilter.org/projects/libnetfilter_conntrack/index.html
 Get more information at:
 http://software.inl.fr/trac/trac.cgi/wiki/pynetfilter_conntrack
 
+Changelog
+=========
+
+Release 0.2
+-----------
+
+ * Python 2.3 compliant
+ * Use ElementTree (or cElementTree) to generate XML output
+ * nfct_address: add getIP(), returns a IPy.IP() object
+ * Fix minor bugs in ConntrackTable.filter()
+ * setup.py: add requires (used by setuptools)

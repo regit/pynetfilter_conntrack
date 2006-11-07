@@ -7,7 +7,8 @@ except ImportError:
     from distutils.core import setup
     use_setuptools = False
 
-VERSION = '0.1'
+import pynetfilter_conntrack
+VERSION = pynetfilter_conntrack.__revision__
 DESCRIPTION = "pynetfilter_conntrack is a Python binding of libnetfilter_conntrack"
 LONG_DESCRIPTION = open("README").read()
 URL = "http://software.inl.fr/trac/trac.cgi/wiki/pynetfilter_conntrack"
