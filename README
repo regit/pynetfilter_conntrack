@@ -3,6 +3,8 @@ pynetfilter_conntrack is a Python binding of this library.  The binding is the
 file pynetfilter_conntrack.py and you have also a clone of conntrack program:
 conntrack.py.
 
+Website: http://software.inl.fr/trac/trac.cgi/wiki/pynetfilter_conntrack
+
 conntrack.py
 ============
 
@@ -24,13 +26,14 @@ Dependencies
 
 Python module depends on:
  * IPy: http://software.inl.fr/trac/trac.cgi/wiki/IPy
+   Debian package: python-ipy
  * ctypes: http://starship.python.net/crew/theller/ctypes/
+   Debian package: python-ctypes
+ * ElementTree: http://effbot.org/zone/element-index.htm
+   Debian package: python-elementtree (integrated to Python 2.5+)
 
 But you also need C library with Linux kernel 2.6.14+:
 http://www.netfilter.org/projects/libnetfilter_conntrack/index.html
-
-Get more information at:
-http://software.inl.fr/trac/trac.cgi/wiki/pynetfilter_conntrack
 
 Changelog
 =========
@@ -43,3 +46,4 @@ Release 0.2
  * nfct_address: add getIP(), returns a IPy.IP() object
  * Fix minor bugs in ConntrackTable.filter()
  * setup.py: add requires (used by setuptools)
+

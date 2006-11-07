@@ -13,7 +13,7 @@ DESCRIPTION = "pynetfilter_conntrack is a Python binding of libnetfilter_conntra
 LONG_DESCRIPTION = open("README").read()
 URL = "http://software.inl.fr/trac/trac.cgi/wiki/pynetfilter_conntrack"
 KEYWORDS = "netfilter conntrack ctypes firewall"
-REQUIRES = ("ctypes>=0.9.6", "IPy>=0.42")
+REQUIRES = ("ctypes>=0.9.6", "IPy>=0.42", "ElementTree>=1.0")
 
 CLASSIFIERS = filter(None, map(str.strip,
 """
