@@ -15,7 +15,7 @@ install: test
 	sudo $(PYTHON) setup.py install
 
 cheeseshop: test clean
-	sudo $(PYTHON) register sdist bdist_egg upload
+	$(PYTHON) setup.py register sdist bdist_egg upload
 
 clean:
 	find -name "*.pyc" -print0|xargs -0 rm -f
