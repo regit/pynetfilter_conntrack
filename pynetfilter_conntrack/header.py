@@ -202,7 +202,7 @@ class nfct_address(Union):
             return IP(value)
 
     def getIPv6(self):
-        # TODO: Write the function!
+        # TODO: Write the function
         raise NotImplementedError()
 
     def getIP(self, protonum):
@@ -370,6 +370,7 @@ class nfct_conntrack(Structure):
         else:
             raise RuntimeError("sprintf_conntrack failure.")
 
+
 class nfct_conntrack_compare(Structure):
     _fields_ = (
         ("ct", nfct_conntrack),
@@ -486,6 +487,96 @@ class ConntrackTable:
     def __len__(self):
         "Number of conntrack entries in the table"
         return len(self._table)
+
+    def __getstate__(self):
+        "Save object instance for pickle"
+        root = {}
+        root["family"] = self.family
+        conntab = []
+        for conn in self._table:
+            conntrack = {}
+            conntrack["id"] = int(conn.id)
+            conntrack["mark"] = int(conn.mark)
+            conntrack["use"] = int(conn.use)
+            conntrack["timeout"] = int(conn.timeout)
+            conntrack["status"] = int(conn.status)
+            ttab = []
+            ctab = []
+            for i in range(NFCT_DIR_MAX):
+                t = conn.tuple[i]
+                tuple = {}
+                tuple["l3protonum"] = int(t.l3protonum)
+                tuple["protonum"] = int(t.protonum)
+                if t.l3protonum == AF_INET:
+                    tuple["src"] = int(t.src.v4)
+                    tuple["dst"] = int(t.dst.v4)
+                else: # protonum == AF_INET6:
+                    tuple["src"] = str(":".join(t.src.v6))
+                    tuple["dst"] = str(":".join(t.dst.v6))
+                tuple["l4src"] = int(t.l4src.tcp.port)
+                tuple["l4dst"] = int(t.l4dst.tcp.port)
+                ttab.append(tuple)
+                c = conn.counters[i]
+                counter = {}
+                counter["packets"] = int(c.packets)
+                counter["bytes"] = int(c.bytes)
+                ctab.append(counter)
+            conntrack["tuples"] = ttab
+            conntrack["counters"] = ctab
+            conntrack["protoinfo"] = conn.protoinfo.tcp.state
+            nat = {}
+            nat["max_ip"] = int(conn.nat.max_ip)
+            nat["min_ip"] = int(conn.nat.min_ip)
+            nat["l4max"] = int(conn.nat.l4max.tcp.port)
+            nat["l4min"] = int(conn.nat.l4min.tcp.port)
+            conntrack["nat"] = nat
+            conntab.append(conntrack)
+        root["table"] = conntab
+        return root
+    
+    def __setstate__(self, root):
+        "Restore object instance from pickle"
+        self.family = root["family"]
+        self._table = []
+        for conntrack in root["table"]:
+            
+            conn = nfct_conntrack()
+            conn.id = conntrack["id"]
+            conn.mark = conntrack["mark"]
+            conn.use = conntrack["use"]
+            conn.timeout = conntrack["timeout"]
+            conn.status = conntrack["status"]
+            ttab = []
+            for etuple in conntrack["tuples"]:
+                t = nfct_tuple()
+                t.l3protonum = etuple["l3protonum"]
+                t.protonum = etuple["protonum"]
+                
+                if t.l3protonum == AF_INET:
+                    t.src = nfct_address(v4=etuple["src"])
+                    t.dst = nfct_address(v4=etuple["dst"])
+                else: # protonum == AF_INET6:
+                    t.src = nfct_address(v6=etuple["src"].split(":"))
+                    t.dst = nfct_address(v6=etuple["dst"].split(":"))
+                t.l4src = nfct_l4(tcp=_port_struct(etuple["l4src"]))
+                t.l4dst = nfct_l4(tcp=_port_struct(etuple["l4dst"]))
+                ttab.append(t)
+            conn.tuple = tuple(ttab)
+            ctab = []
+            for counter in conntrack["counters"]:
+                c = nfct_counters()
+                c.packets = counter["packets"]
+                c.bytes = counter["bytes"]
+                ctab.append(c)
+            conn.counters = tuple(ctab)
+            conn.protoinfo = nfct_protoinfo(tcp=_protoinfo_tcp(conntrack["protoinfo"]))
+            nat = conntrack["nat"]
+            conn.nat = nfct_nat()
+            conn.nat.max_ip = nat["max_ip"]
+            conn.nat.min_ip = nat["min_ip"]
+            conn.nat.l4max = nfct_l4(tcp=_port_struct(nat["l4max"]))
+            conn.nat.l4min = nfct_l4(tcp=_port_struct(nat["l4min"]))
+            self._table.append(conn)
 
     def export_xml(self, output, indent="   "):
         output.write('<?xml version="1.0" encoding="ASCII"?>\n')
