@@ -184,6 +184,15 @@ class nfct_l4(Union):
         ("udp", _port_struct),
         ("icmp", _icmp_struct),
         ("sctp", _port_struct))
+        
+    def getValue(self, protonum):
+        if protonum == IPPROTO_TCP:
+            return self.tcp.port
+        if protonum == IPPROTO_UDP:
+            return self.udp.port
+        if protonum == IPPROTO_ICMP:
+            return self.icmp.type
+        raise NotImplementedError()
 
 class nfct_address(Union):
     """
