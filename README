@@ -38,6 +38,12 @@ http://www.netfilter.org/projects/libnetfilter_conntrack/index.html
 Changelog
 =========
 
+Release 0.3
+-----------
+
+ * Compliance with 'pickle'
+ * Minor enhancements in API
+
 Release 0.2
 -----------
 
