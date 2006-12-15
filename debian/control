@@ -8,7 +8,7 @@ XS-Python-Version: all
 
 Package: pynetfilter-conntrack
 Architecture: any
-Depends: ${python:Depends}, ${misc:Depends}
+Depends: ${python:Depends}, ${misc:Depends}, python-ipy (>= 0.52), python-celementtree|python-elementtree, python-ctypes
 Provides: ${python:Provides}
 XB-Python-Version: ${python:Versions}
 Description: Python binding of libnetfilter_conntrack 
