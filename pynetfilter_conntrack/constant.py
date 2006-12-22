@@ -1,4 +1,4 @@
-from pynetfilter_conntrack.tools import reverse_dict
+from pynetfilter_conntrack import reverse_dict
 from socket import AF_INET, AF_INET6
 
 # ------------------------------- Constants ------------------------------

@@ -1,13 +1,13 @@
 from ctypes import Union, Structure, \
     c_void_p, c_uint, \
     byref, create_string_buffer
-from pynetfilter_conntrack.ctypes_stdint import uint8_t, uint16_t, uint32_t, uint64_t
-from pynetfilter_conntrack.constant import \
+from socket import ntohs, ntohl, AF_INET, AF_INET6
+from IPy import IP
+from pynetfilter_conntrack import \
+    uint8_t, uint16_t, uint32_t, uint64_t, \
     IPPROTO_TCP, IPPROTO_UDP, IPPROTO_SCTP, IPPROTO_NAMES, \
     NFCT_DIR_MAX, L3PROTONUM_NAMES, \
     IPS_SRC_NAT, IPS_SRC_NAT, IPS_DST_NAT, IPS_NAMES
-from socket import ntohs, ntohl, AF_INET, AF_INET6
-from IPy import IP
 try:
     from cElementTree import Element, SubElement
 except ImportError:

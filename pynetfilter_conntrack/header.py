@@ -23,8 +23,8 @@ from ctypes import \
     POINTER, CFUNCTYPE, cast, \
     c_char_p, c_void_p, c_int, c_uint, \
     cdll
-from pynetfilter_conntrack.ctypes_stdint import uint8_t, uint32_t
-from pynetfilter_conntrack.nf_struct import \
+from pynetfilter_conntrack import \
+    uint8_t, uint32_t, \
     nfct_handle_p, nfct_l4, nfct_address, nfct_tuple, nfct_protoinfo, \
     nfct_nat, nfct_counters, nfct_conntrack, nfct_conntrack_compare
 
@@ -106,4 +106,9 @@ nfct_update_conntrack.restype = c_int
 nfct_delete_conntrack = _nfct_library.nfct_delete_conntrack
 nfct_delete_conntrack.argtypes = (nfct_handle_p, POINTER(nfct_tuple), c_int, uint32_t)
 nfct_delete_conntrack.restype = int
+
+__all__ = (
+    "nfct_callback", "nfct_open", "nfct_close", "nfct_sprintf_conntrack",
+    "nfct_register_callback", "nfct_dump_conntrack_table",
+    "nfct_get_conntrack", "nfct_update_conntrack", "nfct_delete_conntrack")
 

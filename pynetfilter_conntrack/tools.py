@@ -50,3 +50,4 @@ def humanDuration(second):
         text.append("%u sec" % second)
     return " ".join(text)
 
+__all__ = ("ctypes_copy", "reverse_dict", "humanDuration")

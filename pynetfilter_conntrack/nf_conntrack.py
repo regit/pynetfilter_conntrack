@@ -1,16 +1,14 @@
-from pynetfilter_conntrack.constant import \
-    CONNTRACK, EXPECT, \
-    NFCT_DIR_ORIGINAL, NFCT_DIR_REPLY, NFCT_DIR_MAX, \
-    IPPROTO_TCP, IPPROTO_UDP, IPPROTO_SCTP
-from pynetfilter_conntrack.header import \
-    nfct_open, nfct_close, \
-    nfct_callback, nfct_register_callback, \
-    nfct_dump_conntrack_table, nfct_update_conntrack, nfct_delete_conntrack
-from pynetfilter_conntrack.tools import ctypes_copy
-from pynetfilter_conntrack.nf_struct import nfct_handle_p
 from types import FunctionType
 from ctypes import byref, cast, c_void_p
 from socket import htons, AF_INET, AF_INET6
+from pynetfilter_conntrack import \
+    CONNTRACK, EXPECT, \
+    NFCT_DIR_ORIGINAL, NFCT_DIR_REPLY, NFCT_DIR_MAX, \
+    IPPROTO_TCP, IPPROTO_UDP, IPPROTO_SCTP, \
+    nfct_handle_p, nfct_open, nfct_close, \
+    nfct_callback, nfct_register_callback, \
+    nfct_dump_conntrack_table, nfct_update_conntrack, nfct_delete_conntrack, \
+    ctypes_copy
 
 class ConntrackTable:
     """

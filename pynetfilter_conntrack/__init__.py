@@ -1,4 +1,6 @@
-__revision__ = '0.4'
+__revision__ = '0.5'
+from pynetfilter_conntrack.tools import *
+from pynetfilter_conntrack.ctypes_stdint import *
 from pynetfilter_conntrack.constant import *
 from pynetfilter_conntrack.nf_struct import *
 from pynetfilter_conntrack.header import *
