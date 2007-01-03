@@ -79,7 +79,7 @@ class ConntrackEntry(object):
         if self.conntrack:
             nfct_destroy(self.conntrack)
 
-    def format(self, msgtype=None, msg_output=NFCT_O_XML, flags=NFCT_OF_SHOW_LAYER3):
+    def format(self, msg_output=NFCT_O_DEFAULT, msgtype=None, flags=NFCT_OF_SHOW_LAYER3):
         """
         Format the entry:
          - msgtype: NFCT_T_UNKNOWN, NFCT_T_NEW, NFCT_T_UPDATE,
@@ -103,7 +103,7 @@ class ConntrackEntry(object):
         self.parent.query(NFCT_Q_UPDATE, self.conntrack)
 
     def __str__(self):
-        return self.format()
+        return self.format(NFCT_O_DEFAULT)
 
 __all__ = ("ConntrackEntry",)
 
