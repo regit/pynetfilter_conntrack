@@ -38,6 +38,16 @@ http://www.netfilter.org/projects/libnetfilter_conntrack/index.html
 Changelog
 =========
 
+Release 0.4
+-----------
+
+ * Rewrite from scratch for new libnetfilter_conntrack
+
+Release 0.3.1
+-------------
+
+ * Add debian/ subdirectory for Debian and Ubuntu packaging
+
 Release 0.3
 -----------
 

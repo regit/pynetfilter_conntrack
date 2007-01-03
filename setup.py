@@ -1,24 +1,29 @@
 #!/usr/bin/env python
 
-try:
+# Use --setuptools to use setuptools
+
+import re
+from os import path
+import sys
+if "--setuptools" in sys.argv:
+    sys.argv.remove("--setuptools")
     from setuptools import setup
     use_setuptools = True
-except ImportError:
+else:
     from distutils.core import setup
     use_setuptools = False
 
-# Retrieve revision numbers
-import re, os.path
-regex_rev = re.compile(r"^\s*__revision__\s*=\s*[\"\'](.*)[\"\']\s*$", re.MULTILINE)
-mod_file = open(os.path.join(os.path.dirname(os.path.abspath(__file__)),"pynetfilter_conntrack", "__init__.py")).read()
-pynfct_rev = regex_rev.search(mod_file).groups()[0]
+# Retrieve revision
+regex_rev = re.compile(r"__revision__\s*=\s*[\"\'](.*)[\"\']\s*$", re.MULTILINE)
+mod_file = open("pynetfilter_conntrack/__init__.py").read()
+VERSION = regex_rev.search(mod_file).groups()[0]
+print VERSION
 
-VERSION = pynfct_rev
 DESCRIPTION = "pynetfilter_conntrack is a Python binding of libnetfilter_conntrack"
 LONG_DESCRIPTION = open("README").read()
 URL = "http://software.inl.fr/trac/trac.cgi/wiki/pynetfilter_conntrack"
 KEYWORDS = "netfilter conntrack ctypes firewall"
-REQUIRES = ("ctypes>=0.9.6", "IPy>=0.42", "ElementTree>=1.0")
+REQUIRES = ("ctypes>=0.9.6", "IPy>=0.42")
 
 CLASSIFIERS = filter(None, map(str.strip,
 """
