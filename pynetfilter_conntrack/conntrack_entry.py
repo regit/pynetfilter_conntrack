@@ -56,7 +56,7 @@ class ConntrackEntry(object):
         value = getter(self.conntrack, attrid)
         if 32 < nbits:
 	    return ctypes_ptr2uint(value, nbits//8)
-        if ntoh:
+        if ntoh and name != "mark":
             return ntoh(value) & 0xFFFFFFFF
         else:
             return value
@@ -68,7 +68,7 @@ class ConntrackEntry(object):
             hton = HTON[nbits]
         except KeyError:
             raise AttributeError("ConntrackEntry object has no attribute '%s'" % name)
-        if hton:
+        if hton and name != "mark":
             value = hton(value)
         setter(self.conntrack, attrid, value)
         return value
