@@ -135,7 +135,7 @@ def get(restype, suffix):
     func.restype = restype
     return func
 
-nfct_get_attr = get(POINTER(uint32_t), "")
+nfct_get_attr = get(c_void_p, "")
 nfct_get_attr_u8 = get(uint8_t, "_u8")
 nfct_get_attr_u16 = get(uint16_t, "_u16")
 nfct_get_attr_u32 = get(uint32_t, "_u32")
@@ -166,7 +166,7 @@ def set(argtype, suffix):
     func.restype = None
     return func
 
-nfct_set_attr = set(POINTER(uint32_t), "")
+nfct_set_attr = set(c_void_p, "")
 nfct_set_attr_u8 = set(uint8_t, "_u8")
 nfct_set_attr_u16 = set(uint16_t, "_u16")
 nfct_set_attr_u32 = set(uint32_t, "_u32")

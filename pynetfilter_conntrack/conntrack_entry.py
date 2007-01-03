@@ -2,7 +2,8 @@ from pynetfilter_conntrack import (nfct_clone, nfct_destroy, nfct_snprintf,
     nfct_get_attr, nfct_get_attr_u8, nfct_get_attr_u16, nfct_get_attr_u32,
     nfct_set_attr, nfct_set_attr_u8, nfct_set_attr_u16, nfct_set_attr_u32,
     NFCT_O_DEFAULT, NFCT_O_XML, NFCT_OF_SHOW_LAYER3, NFCT_T_UNKNOWN,
-    ATTRIBUTES, NFCT_Q_UPDATE)
+    ATTRIBUTES, NFCT_Q_UPDATE,
+    ctypes_ptr2uint)
 from ctypes import create_string_buffer
 from socket import ntohs, ntohl, htons, htonl
 
@@ -12,17 +13,19 @@ GETTER = {
       8: nfct_get_attr_u8,
      16: nfct_get_attr_u16,
      32: nfct_get_attr_u32,
+     64: nfct_get_attr,
     128: nfct_get_attr,
 }
 SETTER = {
       8: nfct_set_attr_u8,
      16: nfct_set_attr_u16,
      32: nfct_set_attr_u32,
+     64: nfct_set_attr,
     128: nfct_set_attr,
 }
 
-NTOH = {8: None, 16: ntohs, 32: ntohl, 128: None}
-HTON = {8: None, 16: htons, 32: htonl, 128: None}
+NTOH = {8: None, 16: ntohs, 32: ntohl, 64: None, 128: None}
+HTON = {8: None, 16: htons, 32: htonl, 64: None, 128: None}
 
 class ConntrackEntry(object):
     def __init__(self, parent, conntrack, msgtype=NFCT_T_UNKNOWN):
@@ -51,8 +54,10 @@ class ConntrackEntry(object):
         except KeyError:
             raise AttributeError("ConntrackEntry object has no attribute '%s'" % name)
         value = getter(self.conntrack, attrid)
+        if 32 < nbits:
+	    return ctypes_ptr2uint(value, nbits//8)
         if ntoh:
-            return ntoh(value)
+            return ntoh(value) & 0xFFFFFFFF
         else:
             return value
 
