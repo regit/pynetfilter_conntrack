@@ -7,6 +7,7 @@ from ctypes import byref
 from pynetfilter_conntrack.ctypes_stdint import uint8_t
 from os import strerror
 from pynetfilter_conntrack.ctypes_errno import get_errno
+from socket import AF_INET
 
 class Conntrack:
     def __init__(self, subsys=CONNTRACK, subscriptions=0):
@@ -44,7 +45,7 @@ class Conntrack:
         self.callback = None
         self.callback_arg = None
 
-    def dump_table(self, family, event_type=NFCT_T_ALL):
+    def dump_table(self, family=AF_INET, event_type=NFCT_T_ALL):
         # Create a pointer to a 'uint8_t' of the address family
         family = byref(uint8_t(family))
 
