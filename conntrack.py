@@ -19,7 +19,7 @@ def main():
     output = OUTPUT_FORMAT[mode]
 
     if mode == "xml":
-        print '<?xml version="1.0" encoding="ASCII"?>'
+        print '<?xml version="1.0" encoding="ISO-8859-1"?>'
         print '<flows>'
     nf = Conntrack()
     table = nf.dump_table(AF_INET)
