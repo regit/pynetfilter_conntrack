@@ -1,4 +1,4 @@
-from pynetfilter_conntrack import (nfct_clone, nfct_destroy, nfct_snprintf,
+from pynetfilter_conntrack import (nfct_destroy, nfct_snprintf,
     nfct_get_attr, nfct_get_attr_u8, nfct_get_attr_u16, nfct_get_attr_u32,
     nfct_set_attr, nfct_set_attr_u8, nfct_set_attr_u16, nfct_set_attr_u32,
     NFCT_O_DEFAULT, NFCT_O_XML, NFCT_OF_SHOW_LAYER3, NFCT_T_UNKNOWN,
@@ -30,12 +30,12 @@ HTON = {8: None, 16: htons, 32: htonl, 64: None, 128: None}
 class ConntrackEntry(object):
     def __init__(self, parent, conntrack, msgtype=NFCT_T_UNKNOWN):
         """
-        Create a conntrack entry: clone entry given as argument.
+        Create a conntrack entry.
 
         Raise a RuntimeError on error.
         """
         self.parent = parent
-        self.conntrack = nfct_clone(conntrack)
+        self.conntrack = conntrack
         if not self.conntrack:
             raise RuntimeError("Unable to clone conntrack entry (no more memory?)!")
         self.msgtype = msgtype
