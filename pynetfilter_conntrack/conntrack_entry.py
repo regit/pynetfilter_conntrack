@@ -56,7 +56,7 @@ class ConntrackEntry(object):
         value = getter(self.conntrack, attrid)
         if 32 < nbits:
 	    return ctypes_ptr2uint(value, nbits//8)
-        if ntoh and name != "mark":
+        if ntoh and name not in ("mark", "timeout"):
             return ntoh(value) & 0xFFFFFFFF
         else:
             return value
@@ -68,7 +68,7 @@ class ConntrackEntry(object):
             hton = HTON[nbits]
         except KeyError:
             raise AttributeError("ConntrackEntry object has no attribute '%s'" % name)
-        if hton and name != "mark":
+        if hton and name not in ("mark", "timeout"):
             value = hton(value)
         setter(self.conntrack, attrid, value)
         return value
@@ -77,8 +77,10 @@ class ConntrackEntry(object):
         if name in ATTRIBUTES:
             self.attr[name] = value
             self._setAttr(name, value)
-        else:
+        elif name in ("parent", "conntrack", "msgtype", "attr"):
             object.__setattr__(self, name, value)
+        else:
+            raise AttributeError("ConntrackEntry object has no attribute '%s'" % name)
 
     def __del__(self):
         if self.conntrack:
