@@ -1,4 +1,4 @@
-__revision__ = '0.4'
+from pynetfilter_conntrack.version import VERSION as __revision__
 from pynetfilter_conntrack.tools import *
 from pynetfilter_conntrack.constant import *
 from pynetfilter_conntrack.func import *
