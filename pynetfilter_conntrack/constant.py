@@ -96,6 +96,44 @@ CONNTRACK = NFNL_SUBSYS_CTNETLINK = 1
 EXPECT = NFNL_SUBSYS_CTNETLINK_EXP = 2
 
 
+### Bitset representing status of connection ################################
+
+IPS_EXPECTED = (1 << 0)
+
+# We've seen packets both ways: bit 1 set.  Can be set, not unset.
+IPS_SEEN_REPLY = (1 << 1)
+
+# Conntrack should never be early-expired.
+IPS_ASSURED = (1 << 2)
+
+# Connection is confirmed: originating packet has left box
+IPS_CONFIRMED = (1 << 3)
+
+# Connection needs src nat in orig dir.  This bit never changed.
+IPS_SRC_NAT = (1 << 4)
+
+# Connection needs dst nat in orig dir.  This bit never changed.
+IPS_DST_NAT = (1 << 5)
+
+# Both together.
+IPS_NAT_MASK = (IPS_DST_NAT | IPS_SRC_NAT)
+
+# Connection needs TCP sequence adjusted.
+IPS_SEQ_ADJUST = (1 << 6)
+
+# NAT initialization bits.
+IPS_SRC_NAT_DONE = (1 << 7)
+IPS_DST_NAT_DONE = (1 << 8)
+
+# Both together
+IPS_NAT_DONE_MASK = (IPS_DST_NAT_DONE | IPS_SRC_NAT_DONE)
+
+# Connection is dying (removed from lists), can not be unset.
+IPS_DYING = (1 << 9)
+
+# Connection has fixed timeout.
+IPS_FIXED_TIMEOUT = (1 << 10)
+
 __all__ = (
     "ATTRIBUTES",
     "NFCT_Q_CREATE", "NFCT_Q_UPDATE", "NFCT_Q_DESTROY", "NFCT_Q_GET",
@@ -105,5 +143,9 @@ __all__ = (
     "CONNTRACK", "EXPECT",
     "NFCT_OF_SHOW_LAYER3", "NFCT_O_DEFAULT", "NFCT_O_XML",
     "NFCT_CB_FAILURE", "NFCT_CB_STOP", "NFCT_CB_CONTINUE", "NFCT_CB_STOLEN",
+    "IPS_EXPECTED", "IPS_SEEN_REPLY", "IPS_ASSURED", "IPS_CONFIRMED",
+    "IPS_SRC_NAT", "IPS_DST_NAT", "IPS_NAT_MASK", "IPS_SEQ_ADJUST",
+    "IPS_SRC_NAT_DONE", "IPS_DST_NAT_DONE", "IPS_NAT_DONE_MASK",
+    "IPS_DYING", "IPS_FIXED_TIMEOUT",
 )
 
