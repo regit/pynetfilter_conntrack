@@ -1,5 +1,4 @@
-from ctypes import (POINTER, c_int,
-    pythonapi, py_object)
+from ctypes import POINTER, c_int, pythonapi, py_object
 
 # Function from pypy project:
 # File pypy/dist/pypy/rpython/rctypes/aerrno.py

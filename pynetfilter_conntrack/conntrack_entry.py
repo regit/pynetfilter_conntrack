@@ -1,9 +1,9 @@
-from pynetfilter_conntrack import (nfct_destroy, nfct_snprintf,
-    nfct_get_attr, nfct_get_attr_u8, nfct_get_attr_u16, nfct_get_attr_u32,
-    nfct_set_attr, nfct_set_attr_u8, nfct_set_attr_u16, nfct_set_attr_u32,
-    NFCT_O_DEFAULT, NFCT_O_XML, NFCT_OF_SHOW_LAYER3, NFCT_T_UNKNOWN,
-    ATTRIBUTES, NFCT_Q_UPDATE,
-    ctypes_ptr2uint)
+from pynetfilter_conntrack import nfct_destroy, nfct_snprintf,\
+    nfct_get_attr, nfct_get_attr_u8, nfct_get_attr_u16, nfct_get_attr_u32,\
+    nfct_set_attr, nfct_set_attr_u8, nfct_set_attr_u16, nfct_set_attr_u32,\
+    NFCT_O_DEFAULT, NFCT_O_XML, NFCT_OF_SHOW_LAYER3, NFCT_T_UNKNOWN,\
+    ATTRIBUTES, NFCT_Q_UPDATE, PF_INET, PF_INET6,\
+    ctypes_ptr2uint
 from ctypes import create_string_buffer
 from socket import ntohs, ntohl, htons, htonl
 
@@ -42,11 +42,21 @@ class ConntrackEntry(object):
         self.attr = {}
 
     def __getattr__(self, name):
+        if name == "hashtuple":
+            if self.orig_l3proto == PF_INET:
+                ip_src = self.orig_ipv4_src
+            elif self.orig_l3proto == PF_INET6:
+                ip_src = self.orig_ipv6_src
+            return (self.orig_l3proto,
+                    ip_src,
+                    self.orig_l4proto,
+                    self.orig_port_src,)
         if name not in self.attr:
             self.attr[name] = self._getAttr(name)
         return self.attr[name]
 
     def _getAttr(self, name):
+        #print "get attribute %s" % name
         try:
             attrid, nbits = ATTRIBUTES[name]
             getter = GETTER[nbits]
@@ -55,7 +65,7 @@ class ConntrackEntry(object):
             raise AttributeError("ConntrackEntry object has no attribute '%s'" % name)
         value = getter(self.conntrack, attrid)
         if 32 < nbits:
-	    return ctypes_ptr2uint(value, nbits//8)
+            return ctypes_ptr2uint(value, nbits//8)
         if ntoh and name not in ("mark", "timeout"):
             return ntoh(value) & 0xFFFFFFFF
         else:

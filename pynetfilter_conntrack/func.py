@@ -1,5 +1,5 @@
-from ctypes import (Structure, cdll, POINTER, CFUNCTYPE,
-    c_int, c_uint, c_void_p, c_char_p)
+from ctypes import Structure, cdll, POINTER, CFUNCTYPE,\
+    c_int, c_uint, c_void_p, c_char_p
 from pynetfilter_conntrack.ctypes_stdint import uint8_t, uint16_t, uint32_t
 
 # Open the dynamic library

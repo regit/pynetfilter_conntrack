@@ -79,6 +79,67 @@ NFCT_Q_FLUSH = 4
 NFCT_Q_DUMP = 5
 NFCT_Q_DUMP_RESET = 6
 
+# layer 3 protocol families
+PF_UNSPEC = 0     # Unspecified
+PF_LOCAL = 1      # Local to host (pipes and file-domain)
+PF_UNIX = 1       # Old BSD name for PF_LOCAL
+PF_FILE = 1       # Another non-standard name for PF_LOCAL
+PF_INET = 2       # IP protocol family
+PF_AX25 = 3       # Amateur Radio AX.25
+PF_IPX = 4        # Novell Internet Protocol
+PF_APPLETALK = 5  # Appletalk DDP
+PF_NETROM = 6     # Amateur radio NetROM
+PF_BRIDGE = 7     # Multiprotocol bridge
+PF_ATMPVC = 8     # ATM PVCs
+PF_X25 = 9        # Reserved for X.25 project
+PF_INET6 = 10     # IP version 6
+PF_ROSE = 11      # Amateur Radio X.25 PLP
+PF_DECnet = 12    # Reserved for DECnet project
+PF_NETBEUI = 13   # Reserved for 802.2LLC project
+PF_SECURITY = 14  # Security callback pseudo AF
+PF_KEY = 15       # PF_KEY key management API
+PF_NETLINK = 16
+PF_ROUTE = 16     # Alias to emulate 4.4BSD
+PF_PACKET = 17    # Packet family
+PF_ASH = 18       # Ash
+PF_ECONET = 19    # Acorn Econet
+PF_ATMSVC = 20    # ATM SVCs
+PF_SNA = 22       # Linux SNA Project
+PF_IRDA = 23      # IRDA sockets
+PF_PPPOX = 24     # PPPoX sockets
+PF_WANPIPE = 25   # Wanpipe API sockets
+PF_BLUETOOTH = 31 # Bluetooth sockets
+PF_MAX = 32       # For now...
+
+# layer 4 protocols
+IPPROTO_IP = 0          # Dummy protocol for TCP
+IPPROTO_HOPOPTS = 0     # IPv6 Hop-by-Hop options
+IPPROTO_ICMP = 1        # Internet Control Message Protocol
+IPPROTO_IGMP = 2        # Internet Group Management Protocol
+IPPROTO_IPIP = 4        # IPIP tunnels (older KA9Q tunnels use 94)
+IPPROTO_TCP = 6         # Transmission Control Protocol
+IPPROTO_EGP = 8         # Exterior Gateway Protocol
+IPPROTO_PUP = 12        # PUP protocol
+IPPROTO_UDP = 17        # User Datagram Protocol
+IPPROTO_IDP = 22        # XNS IDP protocol
+IPPROTO_TP = 29         # SO Transport Protocol Class 4
+IPPROTO_IPV6 = 41       # IPv6-in-IPv4 tunnelling
+IPPROTO_ROUTING = 43    # IPv6 routing header
+IPPROTO_FRAGMENT = 44,  # IPv6 fragmentation header
+IPPROTO_RSVP = 46       # RSVP protocol
+IPPROTO_GRE = 47        # Cisco GRE tunnels (rfc 1701,1702)
+IPPROTO_ESP = 50        # Encapsulation Security Payload protocol
+IPPROTO_AH = 51         # Authentication Header protocol
+IPPROTO_ICMPV6 = 58     # ICMPv6
+IPPROTO_NONE = 59       # IPv6 no next header
+IPPROTO_DSTOPTS = 60    # IPv6 destination options
+IPPROTO_MTP = 92        # Multicast Transport Protocol
+IPPROTO_ENCAP = 98      # Encapsulation Header
+IPPROTO_PIM = 103       # Protocol Independent Multicast
+IPPROTO_COMP = 108      # Compression Header protocol
+IPPROTO_SCTP = 132      # Stream Control Transport Protocol
+IPPROTO_RAW = 255
+
 # tcp state
 NFCT_TCP_ST_NONE = 0
 NFCT_TCP_ST_SYN_SENT = 1
@@ -134,18 +195,30 @@ IPS_DYING = (1 << 9)
 # Connection has fixed timeout.
 IPS_FIXED_TIMEOUT = (1 << 10)
 
-__all__ = (
-    "ATTRIBUTES",
-    "NFCT_Q_CREATE", "NFCT_Q_UPDATE", "NFCT_Q_DESTROY", "NFCT_Q_GET",
-    "NFCT_Q_FLUSH", "NFCT_Q_DUMP", "NFCT_Q_DUMP_RESET",
-    "NFCT_T_UNKNOWN", "NFCT_T_NEW", "NFCT_T_UPDATE", "NFCT_T_DESTROY",
-    "NFCT_T_ALL", "NFCT_T_ERROR",
-    "CONNTRACK", "EXPECT",
-    "NFCT_OF_SHOW_LAYER3", "NFCT_O_DEFAULT", "NFCT_O_XML",
-    "NFCT_CB_FAILURE", "NFCT_CB_STOP", "NFCT_CB_CONTINUE", "NFCT_CB_STOLEN",
-    "IPS_EXPECTED", "IPS_SEEN_REPLY", "IPS_ASSURED", "IPS_CONFIRMED",
-    "IPS_SRC_NAT", "IPS_DST_NAT", "IPS_NAT_MASK", "IPS_SEQ_ADJUST",
-    "IPS_SRC_NAT_DONE", "IPS_DST_NAT_DONE", "IPS_NAT_DONE_MASK",
-    "IPS_DYING", "IPS_FIXED_TIMEOUT",
-)
+##__all__ = (
+##    "ATTRIBUTES",
+##    "NFCT_Q_CREATE", "NFCT_Q_UPDATE", "NFCT_Q_DESTROY", "NFCT_Q_GET",
+##    "NFCT_Q_FLUSH", "NFCT_Q_DUMP", "NFCT_Q_DUMP_RESET",
+##    "NFCT_T_UNKNOWN", "NFCT_T_NEW", "NFCT_T_UPDATE", "NFCT_T_DESTROY",
+##    "NFCT_T_ALL", "NFCT_T_ERROR",
+##    "CONNTRACK", "EXPECT",
+##    "NFCT_OF_SHOW_LAYER3", "NFCT_O_DEFAULT", "NFCT_O_XML",
+##    "NFCT_CB_FAILURE", "NFCT_CB_STOP", "NFCT_CB_CONTINUE", "NFCT_CB_STOLEN",
+##    "IPS_EXPECTED", "IPS_SEEN_REPLY", "IPS_ASSURED", "IPS_CONFIRMED",
+##    "IPS_SRC_NAT", "IPS_DST_NAT", "IPS_NAT_MASK", "IPS_SEQ_ADJUST",
+##    "IPS_SRC_NAT_DONE", "IPS_DST_NAT_DONE", "IPS_NAT_DONE_MASK",
+##    "IPS_DYING", "IPS_FIXED_TIMEOUT",
+##    "PF_UNSPEC", "PF_LOCAL", "PF_UNIX", "PF_FILE", "PF_INET", "PF_AX25",
+##    "PF_IPX", "PF_APPLETALK", "PF_NETROM", "PF_BRIDGE", "PF_ATMPVC", "PF_X25",
+##    "PF_INET6", "PF_ROSE", "PF_DECnet", "PF_NETBEUI", "PF_SECURITY", "PF_KEY",
+##    "PF_NETLINK", "PF_ROUTE", "PF_PACKET", "PF_ASH", "PF_ECONET", "PF_ATMSVC",
+##    "PF_SNA", "PF_IRDA", "PF_PPPOX", "PF_WANPIPE", "PF_BLUETOOTH", "PF_MAX",
+##    "IPPROTO_IP", "IPPROTO_HOPOPTS", "IPPROTO_ICMP", "IPPROTO_IGMP",
+##    "IPPROTO_IPIP", "IPPROTO_TCP", "IPPROTO_EGP", "IPPROTO_PUP", "IPPROTO_UDP",
+##    "IPPROTO_IDP", "IPPROTO_TP", "IPPROTO_IPV6", "IPPROTO_ROUTING",
+##    "IPPROTO_FRAGMENT", "IPPROTO_RSVP", "IPPROTO_GRE", "IPPROTO_ESP",
+##    "IPPROTO_AH", "IPPROTO_ICMPV6", "IPPROTO_NONE", "IPPROTO_DSTOPTS",
+##    "IPPROTO_MTP", "IPPROTO_ENCAP", "IPPROTO_PIM", "IPPROTO_COMP",
+##    "IPPROTO_SCTP", "IPPROTO_RAW",
+##)
 
