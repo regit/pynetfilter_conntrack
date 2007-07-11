@@ -1,5 +1,5 @@
 from ctypes import string_at
-import struct
+import struct, sys
 
 def isBigEndian():
     """
@@ -51,14 +51,33 @@ def ctypes_ptr2uint(ptr, size):
     return raw2long(raw, ctypes_ptr2uint.big_endian)
 ctypes_ptr2uint.big_endian = isBigEndian()
 
-def uint32(n):
-    import sys
-    if sys.hexversion < 0x2040000:
-        if n < 0:
-            return 0x100000000 + n
-        return n
-    return n & 0xFFFFFFFF
-        
+def __int32_to_uint32_old(n):
+    """
+    Convert a signed integer to unsigned integer for python version lesser than 2.4.
+    """
+    if n < 0:
+        return 0x100000000 + n
+    return n
 
-__all__ = ("raw2long", "ctypes_ptr2uint", "uint32")
+def __int32_to_uint32_new(n):
+    """
+    Convert a signed integer to unsigned integer for python version greater or equal to 2.4.
+    """
+    return n & 0xFFFFFFFF
+
+if sys.hexversion < 0x2040000:
+    int32_to_uint32 = __int32_to_uint32_old
+else:
+    int32_to_uint32 = __int32_to_uint32_new
+int32_to_uint32.__doc__ = """Convert a signed integer to unsigned integer.
+Examples:
+
+>>> int32_to_uint32(-1062723156)
+3232244140L
+
+>>> int32_to_uint32(1062723156)
+1062723156
+"""
+
+__all__ = ("raw2long", "ctypes_ptr2uint", "int32_to_uint32")
 
