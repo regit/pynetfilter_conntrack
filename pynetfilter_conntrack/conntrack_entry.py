@@ -3,7 +3,7 @@ from pynetfilter_conntrack import nfct_destroy, nfct_snprintf,\
     nfct_set_attr, nfct_set_attr_u8, nfct_set_attr_u16, nfct_set_attr_u32,\
     NFCT_O_DEFAULT, NFCT_O_XML, NFCT_OF_SHOW_LAYER3, NFCT_T_UNKNOWN,\
     ATTRIBUTES, NFCT_Q_UPDATE, PF_INET, PF_INET6,\
-    ctypes_ptr2uint
+    ctypes_ptr2uint, uint32
 from ctypes import create_string_buffer
 from socket import ntohs, ntohl, htons, htonl
 
@@ -67,9 +67,9 @@ class ConntrackEntry(object):
         if 32 < nbits:
             return ctypes_ptr2uint(value, nbits//8)
         if ntoh and name not in ("mark", "timeout", "status"):
-            return ntoh(value) & 0xFFFFFFFF
+            return uint32(ntoh(value))
         else:
-            return value
+            return uint32(value)
 
     def _setAttr(self, name, value):
         try:

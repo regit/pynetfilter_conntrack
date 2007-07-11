@@ -51,5 +51,14 @@ def ctypes_ptr2uint(ptr, size):
     return raw2long(raw, ctypes_ptr2uint.big_endian)
 ctypes_ptr2uint.big_endian = isBigEndian()
 
-__all__ = ("raw2long", "ctypes_ptr2uint")
+def uint32(n):
+    import sys
+    if sys.hexversion < 0x2040000:
+        if n < 0:
+            return 0x100000000 + n
+        return n
+    return n & 0xFFFFFFFF
+        
+
+__all__ = ("raw2long", "ctypes_ptr2uint", "uint32")
 
