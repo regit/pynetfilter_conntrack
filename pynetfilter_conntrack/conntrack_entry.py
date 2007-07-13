@@ -67,9 +67,9 @@ class ConntrackEntry(object):
         if 32 < nbits:
             return ctypes_ptr2uint(value, nbits//8)
         if ntoh and name not in ("mark", "timeout", "status"):
-            return uint32(ntoh(value))
+            return int32_to_uint32(ntoh(value))
         else:
-            return uint32(value)
+            return int32_to_uint32(value)
 
     def _setAttr(self, name, value):
         try:
