@@ -3,7 +3,7 @@ from pynetfilter_conntrack import nfct_destroy, nfct_snprintf,\
     nfct_set_attr, nfct_set_attr_u8, nfct_set_attr_u16, nfct_set_attr_u32,\
     NFCT_O_DEFAULT, NFCT_O_XML, NFCT_OF_SHOW_LAYER3, NFCT_T_UNKNOWN,\
     ATTRIBUTES, NFCT_Q_UPDATE, PF_INET, PF_INET6,\
-    ctypes_ptr2uint, uint32
+    ctypes_ptr2uint, int32_to_uint32
 from ctypes import create_string_buffer
 from socket import ntohs, ntohl, htons, htonl
 
