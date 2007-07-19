@@ -1,0 +1,18 @@
+Source: pynetfilter-conntrack
+Section: unknown
+Priority: optional
+Maintainer: Eric Leblond <regit@inl.fr>
+Build-Depends: cdbs, cdbs, debhelper (>= 5), python-central (>= 0.5), python-all-dev (>= 2.3.5-11), libnetfilter-conntrack-dev, libnfnetlink-dev
+Standards-Version: 3.7.2
+XS-Python-Version: all
+
+Package: pynetfilter-conntrack
+Architecture: any
+Depends: ${python:Depends}, ${misc:Depends}, python-ipy (>= 0.52), python-celementtree|python-elementtree, python-ctypes
+Provides: ${python:Provides}
+XB-Python-Version: ${python:Versions}
+Description: Python binding of libnetfilter_conntrack 
+ This python library is based on libnetfilter_conntrack, which lets you
+ manipulate conntrack objects. In other words, pynetfilter_conntrack lets
+ you deal with Netfilter's stateful inspection objects from the Python
+ world.

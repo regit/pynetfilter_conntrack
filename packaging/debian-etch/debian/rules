@@ -1,0 +1,58 @@
+#!/usr/bin/make -f
+
+# -*- makefile -*-
+# Sample debian/rules that uses debhelper.
+# GNU copyright 1997 to 1999 by Joey Hess.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+install_dir = $(CURDIR)/debian/python-netfilter-conntrack
+
+build: build-stamp
+
+build-stamp:
+	dh_testdir
+	python setup.py build
+	touch build-stamp
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp
+	rm -rf build
+	-find . -name '*.py[co]' | xargs rm -f
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs
+	python setup.py install \
+		--root=$(install_dir) \
+		--install-scripts=/usr/sbin
+
+# Build architecture-independent files here.
+binary-indep: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs
+	dh_installdocs README
+#       dh_installexamples examples/*
+	dh_installman
+	dh_pycentral -ppython-netfilter-conntrack
+	dh_python
+	dh_compress -X.py
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+# Build architecture-dependent files here.
+binary-arch: build install
+# We have nothing to do by default.
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install configure

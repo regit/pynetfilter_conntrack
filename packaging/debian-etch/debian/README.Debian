@@ -1,0 +1,6 @@
+pynetfilter-conntrack for Debian
+--------------------------------
+
+This build support either unstable package or nufw provided package
+
+ -- Eric Leblond <regit@inl.fr>  Tue, 12 Dec 2006 10:51:21 +0100

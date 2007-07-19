@@ -1,0 +1,21 @@
+This package was debianized by Eric Leblond <regit@inl.fr> on
+Tue, 12 Dec 2006 10:51:21 +0100.
+
+It was downloaded from http://software.inl.fr/trac/trac.cgi/wiki/pynetfilter_conntrack
+
+Upstream Author: Victor Stinner <v.stinner@inl.fr>
+
+Copyright: 2006, INL
+
+License:
+
+pynetfilter_conntrack is licensed under GPL v2.
+
+
+The Debian packaging is (C) 2006, Eric Leblond <regit@inl.fr> and
+is licensed under the GPL, see `/usr/share/common-licenses/GPL'.
+
+
+# Please also look if there are files or directories which have a
+# different copyright/license attached and list them here.
+

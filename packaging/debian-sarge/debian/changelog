@@ -1,0 +1,12 @@
+pynetfilter-conntrack (0.3.1-3) unstable; urgency=low
+
+  * Adding missing dependance.
+
+ -- Damien Boucard (INL) <damien.boucard@inl.fr>  Wed, 18 Apr 2007 10:10:53 +0200
+
+pynetfilter-conntrack (0.3.1-2) unstable; urgency=low
+
+  * Initial release
+
+ -- Damien Boucard (INL) <damien.boucard@inl.fr>  Fri,  5 Jan 2007 11:19:26 +0100
+
