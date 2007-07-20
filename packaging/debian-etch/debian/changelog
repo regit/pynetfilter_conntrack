@@ -1,3 +1,11 @@
+pynetfilter-conntrack (0.4-1+etch1) unstable; urgency=low
+
+  * New upstream release.
+  * Removing deprecated depandance from control (python-elementtree).
+  * Setting version for dependances to libnetfilter-conntrack in control (0.0.50).
+
+ -- Damien Boucard (INL) <damien.boucard@inl.fr>  Fri, 20 Jul 2007 10:17:38 +0200
+
 pynetfilter-conntrack (0.3.1-3+etch1) unstable; urgency=low
 
   * Port 0.3.1-3 fix to Etch

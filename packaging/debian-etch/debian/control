@@ -4,12 +4,12 @@ XS-Python-Version: >= 2.3
 Priority: optional
 Maintainer: Eric Leblond <regit@inl.fr>
 Uploaders: Damien Boucard (INL) <damien.boucard@inl.fr>
-Build-Depends: debhelper (>= 4.2.28), python-central (>= 0.4.7), libnetfilter-conntrack-dev, libnfnetlink-dev
+Build-Depends: debhelper (>= 4.2.28), python-central (>= 0.4.7), libnetfilter-conntrack-dev (>= 0.0.50), libnfnetlink-dev
 Standards-Version: 3.7.2
 
 Package: python-netfilter-conntrack
 Architecture: all
-Depends: ${python:Depends}, libnetfilter-conntrack1, python-ipy (>= 0.52), python-elementtree, python-ctypes
+Depends: ${python:Depends}, libnetfilter-conntrack1 (>= 0.0.50), python-ipy (>= 0.52), python-ctypes
 Recommends: python-celementtree
 Provides: ${python:Provides}
 XB-Python-Version: >= 2.3
