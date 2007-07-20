@@ -2,7 +2,7 @@
 
 build_dir   = build
 install_dir = debian/python-pynetfilter-conntrack/usr
-setup       = /usr/bin/python2.3 ./setup.py --quiet
+setup       = /usr/bin/python ./setup.py --quiet
 
 binary: binary-indep
 
@@ -24,10 +24,10 @@ binary-indep: build install
 install: build
 	dh_testdir
 	dh_testroot
-	dh_installdirs 
+	dh_installdirs
 
 build: build-stamp
-build-stamp: 
+build-stamp:
 	dh_testdir
 	$(setup) build --build-base $(build_dir) install --no-compile --prefix $(install_dir)
 	touch build-stamp
