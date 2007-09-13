@@ -172,6 +172,10 @@ nfct_set_attr_u16 = set(uint16_t, "_u16")
 nfct_set_attr_u32 = set(uint32_t, "_u32")
 del set
 
+# extern int nfct_catch(struct nfct_handle *h);
+nfct_catch = library.nfct_catch
+nfct_catch.argtypes = (nfct_handle_p,)
+nfct_catch.restype = c_int
 
 # -------------------------------------------------------------------------
 # -------------------------------------------------------------------------
@@ -203,7 +207,7 @@ del set
 
 __all__ = ("nfct_new", "nfct_destroy", "nfct_open", "nfct_close", "nfct_query",
     "nfct_callback_t", "nfct_callback_register", "nfct_callback_unregister",
-    "nfct_clone", "nfct_snprintf",
+    "nfct_clone", "nfct_snprintf", "nfct_catch",
     "nfct_get_attr", "nfct_get_attr_u8", "nfct_get_attr_u16", "nfct_get_attr_u32",
     "nfct_set_attr", "nfct_set_attr_u8", "nfct_set_attr_u16", "nfct_set_attr_u32",
 )
