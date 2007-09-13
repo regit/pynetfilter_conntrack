@@ -28,18 +28,19 @@ NTOH = {8: None, 16: ntohs, 32: ntohl, 64: None, 128: None}
 HTON = {8: None, 16: htons, 32: htonl, 64: None, 128: None}
 
 class ConntrackEntry(object):
-    def __init__(self, parent, conntrack, msgtype=NFCT_T_UNKNOWN):
+    def __init__(self, parent, conntrack, msgtype=NFCT_T_UNKNOWN, destroy=True):
         """
         Create a conntrack entry.
 
         Raise a RuntimeError on error.
         """
-        self.parent = parent
-        self.conntrack = conntrack
-        if not self.conntrack:
+        self._destroy = destroy
+        self._conntrack = conntrack
+        self._parent = parent
+        if not self._conntrack:
             raise RuntimeError("Unable to clone conntrack entry (no more memory?)!")
-        self.msgtype = msgtype
-        self.attr = {}
+        self._msgtype = msgtype
+        self._attr = {}
 
     def __getattr__(self, name):
         if name == "hashtuple":
@@ -51,9 +52,9 @@ class ConntrackEntry(object):
                     ip_src,
                     self.orig_l4proto,
                     self.orig_port_src,)
-        if name not in self.attr:
-            self.attr[name] = self._getAttr(name)
-        return self.attr[name]
+        if name not in self._attr:
+            self._attr[name] = self._getAttr(name)
+        return self._attr[name]
 
     def _getAttr(self, name):
         #print "get attribute %s" % name
@@ -63,7 +64,7 @@ class ConntrackEntry(object):
             ntoh = NTOH[nbits]
         except KeyError:
             raise AttributeError("ConntrackEntry object has no attribute '%s'" % name)
-        value = getter(self.conntrack, attrid)
+        value = getter(self._conntrack, attrid)
         if 32 < nbits:
             return ctypes_ptr2uint(value, nbits//8)
         if ntoh and name not in ("mark", "timeout", "status"):
@@ -80,21 +81,21 @@ class ConntrackEntry(object):
             raise AttributeError("ConntrackEntry object has no attribute '%s'" % name)
         if hton and name not in ("mark", "timeout", "status"):
             value = hton(value)
-        setter(self.conntrack, attrid, value)
+        setter(self._conntrack, attrid, value)
         return value
 
     def __setattr__(self, name, value):
         if name in ATTRIBUTES:
-            self.attr[name] = value
+            self._attr[name] = value
             self._setAttr(name, value)
-        elif name in ("parent", "conntrack", "msgtype", "attr"):
+        elif name in ("_parent", "_conntrack", "_msgtype", "_attr", "_destroy"):
             object.__setattr__(self, name, value)
         else:
             raise AttributeError("ConntrackEntry object has no attribute '%s'" % name)
 
     def __del__(self):
-        if self.conntrack:
-            nfct_destroy(self.conntrack)
+        if self._destroy and self._conntrack:
+            nfct_destroy(self._conntrack)
 
     def format(self, msg_output=NFCT_O_DEFAULT, msgtype=None, flags=NFCT_OF_SHOW_LAYER3):
         """
@@ -110,14 +111,14 @@ class ConntrackEntry(object):
         """
         buffer = create_string_buffer(BUFFER_SIZE)
         if msgtype is None:
-            msgtype = self.msgtype
-        ret = nfct_snprintf(buffer, BUFFER_SIZE, self.conntrack, msgtype, msg_output, flags)
+            msgtype = self._msgtype
+        ret = nfct_snprintf(buffer, BUFFER_SIZE, self._conntrack, msgtype, msg_output, flags)
         if ret <= 0:
             raise RuntimeError("nfct_snprintf() failure")
         return buffer.value
 
     def update(self):
-        self.parent.query(NFCT_Q_UPDATE, self.conntrack)
+        self._parent.query(NFCT_Q_UPDATE, self._conntrack)
 
     def __str__(self):
         return self.format(NFCT_O_DEFAULT)
