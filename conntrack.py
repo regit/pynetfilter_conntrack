@@ -18,15 +18,20 @@ def main():
     mode = sys.argv[1]
     output = OUTPUT_FORMAT[mode]
 
-    if mode == "xml":
-        print '<?xml version="1.0" encoding="ISO-8859-1"?>'
-        print '<flows>'
-    nf = Conntrack()
-    table = nf.dump_table(AF_INET)
-    for entry in table:
-        print entry.format(output)
-    if mode == "xml":
-        print '</flows>'
+    try:
+        if mode == "xml":
+            print '<?xml version="1.0" encoding="ISO-8859-1"?>'
+            print '<flows>'
+        nf = Conntrack()
+        table = nf.dump_table(AF_INET)
+        for entry in table:
+            print entry.format(output)
+        if mode == "xml":
+            print '</flows>'
+    except RuntimeError, err:
+        print "ERROR: %s" % err
+    except KeyboardInterrupt:
+        print "Interrupted."
 
 if __name__ == "__main__":
     main()
