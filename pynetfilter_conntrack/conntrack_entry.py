@@ -5,7 +5,7 @@ from pynetfilter_conntrack import \
     nfct_setobjopt,\
     NFCT_O_DEFAULT, NFCT_O_XML, NFCT_OF_SHOW_LAYER3, NFCT_T_UNKNOWN,\
     ATTRIBUTES, NFCT_Q_UPDATE, PF_INET, PF_INET6,\
-    NFCT_Q_DESTROY,\
+    NFCT_Q_CREATE, NFCT_Q_DESTROY,\
     ctypes_ptr2uint, int32_to_uint32
 from ctypes import create_string_buffer
 from socket import ntohs, ntohl, htons, htonl
@@ -137,8 +137,14 @@ class ConntrackEntry(object):
             raise RuntimeError("nfct_snprintf() failure")
         return buffer.value
 
+    def _query(self, command):
+        self._conntrack.query(command, self._handle)
+
     def update(self):
-        self._conntrack.query(NFCT_Q_UPDATE, self._handle)
+        self._query(NFCT_Q_UPDATE)
+
+    def create(self):
+        self._query(NFCT_Q_CREATE)
 
     def __str__(self):
         return self.format(NFCT_O_DEFAULT)

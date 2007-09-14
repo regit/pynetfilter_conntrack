@@ -1,4 +1,5 @@
 Version 0.5
+    * New classes for EXPECT manipulation: Expect and ExpectEntry
     * Remove Conntrack.destroy_conntrack(), replaced by ConntrackEntry.destroy()
     * ConntrackEntry IP attributes are now IPy.IP type
 

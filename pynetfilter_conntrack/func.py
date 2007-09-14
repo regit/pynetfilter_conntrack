@@ -33,7 +33,6 @@ nfct_new = library.nfct_new
 nfct_new.argtypes = None
 nfct_new.restype = nf_conntrack_p
 
-
 #--------------------------------------------------------------------------
 # void nfct_destroy(struct nf_conntrack *ct): Release a conntrack object
 #
@@ -129,17 +128,17 @@ nfct_clone.restype = nf_conntrack_p
 #				   const enum nf_conntrack_attr type);
 #
 # Get an attribute on a conntrack entry
-def get(restype, suffix):
+def getter(restype, suffix):
     func = getattr(library, "nfct_get_attr" + suffix)
     func.argtypes = (nf_conntrack_p, c_uint)
     func.restype = restype
     return func
 
-nfct_get_attr = get(c_void_p, "")
-nfct_get_attr_u8 = get(uint8_t, "_u8")
-nfct_get_attr_u16 = get(uint16_t, "_u16")
-nfct_get_attr_u32 = get(uint32_t, "_u32")
-del get
+nfct_get_attr = getter(c_void_p, "")
+nfct_get_attr_u8 = getter(uint8_t, "_u8")
+nfct_get_attr_u16 = getter(uint16_t, "_u16")
+nfct_get_attr_u32 = getter(uint32_t, "_u32")
+del getter
 
 
 #--------------------------------------------------------------------------
@@ -160,17 +159,17 @@ del get
 #                        u_int32_t value);
 #
 # Set an attribute on a conntrack entry
-def set(argtype, suffix):
+def setter(argtype, suffix):
     func = getattr(library, "nfct_set_attr" + suffix)
     func.argtypes = (nf_conntrack_p, argtype)
     func.restype = None
     return func
 
-nfct_set_attr = set(c_void_p, "")
-nfct_set_attr_u8 = set(uint8_t, "_u8")
-nfct_set_attr_u16 = set(uint16_t, "_u16")
-nfct_set_attr_u32 = set(uint32_t, "_u32")
-del set
+nfct_set_attr = setter(c_void_p, "")
+nfct_set_attr_u8 = setter(uint8_t, "_u8")
+nfct_set_attr_u16 = setter(uint16_t, "_u16")
+nfct_set_attr_u32 = setter(uint32_t, "_u32")
+del setter
 
 # -------------------------------------------------------------------------
 # int nfct_catch(struct nfct_handle *h);
