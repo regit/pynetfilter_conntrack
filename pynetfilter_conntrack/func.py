@@ -172,42 +172,25 @@ nfct_set_attr_u16 = set(uint16_t, "_u16")
 nfct_set_attr_u32 = set(uint32_t, "_u32")
 del set
 
-# extern int nfct_catch(struct nfct_handle *h);
+# -------------------------------------------------------------------------
+# int nfct_catch(struct nfct_handle *h);
 nfct_catch = library.nfct_catch
 nfct_catch.argtypes = (nfct_handle_p,)
 nfct_catch.restype = c_int
 
 # -------------------------------------------------------------------------
+# int nfct_setobjopt(struct nf_conntrack *ct, unsigned int option);
+nfct_setobjopt = library.nfct_setobjopt
+nfct_setobjopt.argtypes = (nf_conntrack_p, c_uint)
+nfct_setobjopt.restype = c_int
+
 # -------------------------------------------------------------------------
 
-# get option
-#extern int nfct_setobjopt(struct nf_conntrack *ct, unsigned int option);
-#extern int nfct_getobjopt(const struct nf_conntrack *ct, unsigned int option);
-#
-# checker
-#extern int nfct_attr_is_set(const struct nf_conntrack *ct,
-#			    const enum nf_conntrack_attr type);
-#
-# unsetter
-#extern int nfct_attr_unset(struct nf_conntrack *ct,
-#			   const enum nf_conntrack_attr type);
-#
-# print
-#extern int nfct_snprintf(char *buf,
-#			 unsigned int size,
-#			 const struct nf_conntrack *ct,
-#			 const unsigned int msg_type,
-#			 const unsigned int out_type,
-#			 const unsigned int out_flags);
-# query
-#extern int nfct_query(struct nfct_handle *h,
-#		      const enum nf_conntrack_query query,
-#		      const void *data);
-#
-
-__all__ = ("nfct_new", "nfct_destroy", "nfct_open", "nfct_close", "nfct_query",
-    "nfct_callback_t", "nfct_callback_register", "nfct_callback_unregister",
-    "nfct_clone", "nfct_snprintf", "nfct_catch",
+__all__ = (
+    "nfct_handle_p", "nfct_callback_t",
+    "nfct_new", "nfct_destroy", "nfct_open", "nfct_close", "nfct_query",
+    "nfct_callback_register", "nfct_callback_unregister",
+    "nfct_clone", "nfct_snprintf", "nfct_catch", "nfct_setobjopt",
     "nfct_get_attr", "nfct_get_attr_u8", "nfct_get_attr_u16", "nfct_get_attr_u32",
     "nfct_set_attr", "nfct_set_attr_u8", "nfct_set_attr_u16", "nfct_set_attr_u32",
 )
