@@ -94,8 +94,11 @@ class ConntrackEntry(object):
             raise AttributeError("ConntrackEntry object has no attribute '%s'" % name)
 
     def __del__(self):
-        if self._destroy and self._conntrack:
-            nfct_destroy(self._conntrack)
+        if '_destroy' not in self.__dict or not self._destroy:
+            return
+        if '_conntrack' not in self.__dict__ or not self._conntrack:
+            return
+        nfct_destroy(self._conntrack)
 
     def format(self, msg_output=NFCT_O_DEFAULT, msgtype=None, flags=NFCT_OF_SHOW_LAYER3):
         """
