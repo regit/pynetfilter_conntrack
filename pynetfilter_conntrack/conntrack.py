@@ -89,6 +89,7 @@ class Conntrack:
         ret = nfct_catch(self.handle)
         if ret != 0:
             raise RuntimeError("nfct_catch() failure: %s" % strerror(get_errno()))
+        self.unregister_callback()
 
 __all__ = ("Conntrack", )
 

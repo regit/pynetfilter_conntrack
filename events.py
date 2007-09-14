@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from pynetfilter_conntrack import (Conntrack, ConntrackEntry,
     NFCT_ALL_CT_GROUPS,
-    NFCT_CB_STOP, NFCT_CB_CONTINUE, NFCT_CB_STOLEN)
+    NFCT_CB_STOP, NFCT_CB_CONTINUE)
 from socket import AF_INET
 import sys
 
@@ -21,9 +21,8 @@ def event_cb(msgtype, ct, data):
 def main():
     conntrack = Conntrack(subscriptions=NFCT_ALL_CT_GROUPS)
     event_cb.conntrack = conntrack
-    conntrack.register_callback(event_cb)
     try:
-        conntrack.catch()
+        conntrack.catch(event_cb)
     except KeyboardInterrupt:
         print "Interrupted."
 
