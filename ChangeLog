@@ -1,0 +1,4 @@
+Version 0.5
+    * Remove Conntrack.destroy_conntrack(), replaced by ConntrackEntry.destroy()
+    * ConntrackEntry IP attributes are now IPy.IP type
+

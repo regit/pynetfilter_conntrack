@@ -2,8 +2,7 @@ from pynetfilter_conntrack import ConntrackEntry,\
     nfct_new, nfct_destroy, nfct_open, nfct_close, nfct_query, \
     nfct_callback_t, nfct_callback_register, nfct_callback_unregister,\
     nfct_snprintf, nfct_catch, \
-    CONNTRACK, NFCT_Q_DUMP, NFCT_T_ALL, NFCT_CB_STOLEN,\
-    NFCT_Q_DESTROY
+    CONNTRACK, NFCT_Q_DUMP, NFCT_T_ALL, NFCT_CB_STOLEN
 from ctypes import byref
 from pynetfilter_conntrack.ctypes_stdint import uint8_t
 from os import strerror
@@ -31,8 +30,11 @@ class Conntrack:
 
     def __del__(self):
         """Destroy conntrack object"""
-        if self.handle:
-            nfct_close(self.handle)
+        if 'handle' not in self.__dict__:
+            return
+        if not self.handle:
+            return
+        nfct_close(self.handle)
 
     def register_callback(self, callback, event_type=NFCT_T_ALL, data=None):
         """
@@ -50,13 +52,6 @@ class Conntrack:
         nfct_callback_unregister(self.handle)
         self.callback = None
         self.callback_arg = None
-
-    def destroy_conntrack(self, entry):
-        """
-        Destroy (kill) a connection in the conntrack table,
-        entry type is 'ConntrackEntry'.
-        """
-        self.query(NFCT_Q_DESTROY, entry.conntrack)
 
     def dump_table(self, family=AF_INET, event_type=NFCT_T_ALL):
         # Create a pointer to a 'uint8_t' of the address family
@@ -88,12 +83,12 @@ class Conntrack:
     def catch(self, callback):
         """
         Catch all Netfilter events: call specified callback for each event.
-        See register_callback() for callback details.
+        See register_callback() method for callback details.
         """
         self.register_callback(callback)
         ret = nfct_catch(self.handle)
         if ret != 0:
-            raise RuntimeError("nfct_query() failure: %s" % strerror(get_errno()))
+            raise RuntimeError("nfct_catch() failure: %s" % strerror(get_errno()))
 
 __all__ = ("Conntrack", )
 
