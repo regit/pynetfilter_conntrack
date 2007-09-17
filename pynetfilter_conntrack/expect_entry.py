@@ -2,8 +2,7 @@ from pynetfilter_conntrack import ConntrackEntry,\
     nfexp_new, nfexp_destroy, nfexp_snprintf,\
     NFCT_O_DEFAULT, NFCT_OF_SHOW_LAYER3
 from ctypes import create_string_buffer
-from pynetfilter_conntrack.conntrack_entry import BUFFER_SIZE
-from pynetfilter_conntrack.entry_base import EntryBase
+from pynetfilter_conntrack.entry_base import EntryBase, BUFFER_SIZE
 
 class ExpectEntry(EntryBase):
     @staticmethod
@@ -34,8 +33,8 @@ class ExpectEntry(EntryBase):
         if msgtype is None:
             msgtype = self._msgtype
         ret = nfexp_snprintf(buffer, BUFFER_SIZE, self._handle, msgtype, msg_output, flags)
-        if ret <= 0:
-            raise RuntimeError("nfexp_snprintf() failure")
+        if not(0 <= ret <= (BUFFER_SIZE-1)):
+            self._error('nfct_snprintf')
         return buffer.value
 
 __all__ = ('ExpectEntry',)

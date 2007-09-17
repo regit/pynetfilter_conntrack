@@ -10,12 +10,10 @@ from pynetfilter_conntrack import \
 from ctypes import create_string_buffer
 from socket import ntohs, ntohl, htons, htonl
 from IPy import IP
-from pynetfilter_conntrack.entry_base import EntryBase
+from pynetfilter_conntrack.entry_base import EntryBase, BUFFER_SIZE
 
 IPV4_ATTRIBUTES = set(("orig_ipv4_src", "orig_ipv4_dst",
     "repl_ipv4_src", "repl_ipv4_dst"))
-
-BUFFER_SIZE = 1024 # bytes including nul byte
 
 GETTER = {
       8: nfct_get_attr_u8,
@@ -120,8 +118,8 @@ class ConntrackEntry(EntryBase):
         if msgtype is None:
             msgtype = self._msgtype
         ret = nfct_snprintf(buffer, BUFFER_SIZE, self._handle, msgtype, msg_output, flags)
-        if ret <= 0:
-            raise RuntimeError("nfct_snprintf() failure")
+        if not(0 <= ret <= (BUFFER_SIZE-1)):
+            self._error('nfct_snprintf')
         return buffer.value
 
     def update(self):
