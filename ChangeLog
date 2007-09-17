@@ -1,5 +1,8 @@
 Version 0.5
-    * New classes for EXPECT manipulation: Expect and ExpectEntry
+    * New classes for EXPECT manipulation, Expect and ExpectEntry
     * Remove Conntrack.destroy_conntrack(), replaced by ConntrackEntry.destroy()
-    * ConntrackEntry IP attributes are now IPy.IP type
+    * ConntrackEntry IP attributes are now of IPy.IP type
+    * Replace conntrack entry "hashtuple" attribute by __hash__() method, so
+      use hash(entry) to get hash value. Hash is now a classic hash value and
+      not a tuple of integers.
 
