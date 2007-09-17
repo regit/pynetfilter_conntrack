@@ -35,31 +35,3 @@ Python module depends on:
  * Only for Python < 2.5: ctypes 1.0+
    Debian package: python-ctypes
 
-Changelog
-=========
-
-Release 0.4
------------
-
- * Rewrite from scratch for new libnetfilter_conntrack
-
-Release 0.3.1
--------------
-
- * Add debian/ subdirectory for Debian and Ubuntu packaging
-
-Release 0.3
------------
-
- * Compliance with 'pickle'
- * Minor enhancements in API
-
-Release 0.2
------------
-
- * Python 2.3 compliant
- * Use ElementTree (or cElementTree) to generate XML output
- * nfct_address: add getIP(), returns a IPy.IP() object
- * Fix minor bugs in ConntrackTable.filter()
- * setup.py: add requires (used by setuptools)
-
