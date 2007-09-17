@@ -3,13 +3,14 @@ from pynetfilter_conntrack import \
     nfct_get_attr, nfct_get_attr_u8, nfct_get_attr_u16, nfct_get_attr_u32,\
     nfct_set_attr, nfct_set_attr_u8, nfct_set_attr_u16, nfct_set_attr_u32,\
     nfct_setobjopt,\
-    NFCT_O_DEFAULT, NFCT_O_XML, NFCT_OF_SHOW_LAYER3, NFCT_T_UNKNOWN,\
+    NFCT_O_DEFAULT, NFCT_O_XML, NFCT_OF_SHOW_LAYER3,\
     ATTRIBUTES, NFCT_Q_UPDATE, PF_INET, PF_INET6,\
     NFCT_Q_CREATE, NFCT_Q_DESTROY,\
     ctypes_ptr2uint, int32_to_uint32
 from ctypes import create_string_buffer
 from socket import ntohs, ntohl, htons, htonl
 from IPy import IP
+from pynetfilter_conntrack.entry_base import EntryBase
 
 IPV4_ATTRIBUTES = set(("orig_ipv4_src", "orig_ipv4_dst",
     "repl_ipv4_src", "repl_ipv4_dst"))
@@ -34,25 +35,11 @@ SETTER = {
 NTOH = {8: None, 16: ntohs, 32: ntohl, 64: None, 128: None}
 HTON = {8: None, 16: htons, 32: htonl, 64: None, 128: None}
 
-class ConntrackEntry(object):
+class ConntrackEntry(EntryBase):
     @staticmethod
     def new(conntrack):
         handle = nfct_new()
         return ConntrackEntry(conntrack, handle)
-
-    def __init__(self, conntrack, handle, msgtype=NFCT_T_UNKNOWN, destroy=True):
-        """
-        Create a conntrack entry.
-
-        Raise a RuntimeError on error.
-        """
-        self._destroy = destroy
-        self._handle = handle
-        self._sub_system = conntrack
-        if not self._handle:
-            raise RuntimeError("Empty conntrack entry handler")
-        self._msgtype = msgtype
-        self._attr = {}
 
     def __getattr__(self, name):
         if name not in self._attr:
@@ -115,7 +102,7 @@ class ConntrackEntry(object):
         """
         Destroy (kill) a connection in the conntrack table.
         """
-        self.query(NFCT_Q_DESTROY, self._handle)
+        self.query(NFCT_Q_DESTROY)
 
     def format(self, msg_output=NFCT_O_DEFAULT, msgtype=None, flags=NFCT_OF_SHOW_LAYER3):
         """
@@ -137,17 +124,8 @@ class ConntrackEntry(object):
             raise RuntimeError("nfct_snprintf() failure")
         return buffer.value
 
-    def _query(self, command):
-        self._sub_system.query(command)
-
     def update(self):
-        self._query(NFCT_Q_UPDATE)
-
-    def create(self):
-        self._query(NFCT_Q_CREATE)
-
-    def __str__(self):
-        return self.format(NFCT_O_DEFAULT)
+        self.query(NFCT_Q_UPDATE)
 
     def setobjopt(self, option):
         nfct_setobjopt(self._handle, option)
