@@ -16,6 +16,15 @@ class nfct_handle(Structure):
 nf_conntrack_p = POINTER(nf_conntrack)
 nfct_handle_p = POINTER(nfct_handle)
 
+class nfct_conntrack_compare_t(Structure):
+    _fields_ = (
+        ("ct", nf_conntrack_p),
+        ("flags", c_uint),
+        ("l3flags", c_uint),
+        ("l4flags", c_uint),
+    )
+nfct_conntrack_compare_p = POINTER(nfct_conntrack_compare_t)
+
 #--------------------------------------------------------------------------
 # int callback(enum nf_conntrack_msg_type type,
 #              struct nf_conntrack *ct,
@@ -184,6 +193,14 @@ nfct_setobjopt.argtypes = (nf_conntrack_p, c_uint)
 nfct_setobjopt.restype = c_int
 
 # -------------------------------------------------------------------------
+# int nfct_conntrack_compare(struct nfct_conntrack *ct1,
+#                            struct nfct_conntrack *ct2,
+#                            struct nfct_conntrack_compare *cmp);
+nfct_conntrack_compare = library.nfct_conntrack_compare
+nfct_conntrack_compare.argtypes = (nf_conntrack_p, nf_conntrack_p, nfct_conntrack_compare_p)
+nfct_conntrack_compare.restype = c_int
+
+# -------------------------------------------------------------------------
 
 __all__ = (
     "nfct_handle_p", "nfct_callback_t",
@@ -192,5 +209,6 @@ __all__ = (
     "nfct_clone", "nfct_snprintf", "nfct_catch", "nfct_setobjopt",
     "nfct_get_attr", "nfct_get_attr_u8", "nfct_get_attr_u16", "nfct_get_attr_u32",
     "nfct_set_attr", "nfct_set_attr_u8", "nfct_set_attr_u16", "nfct_set_attr_u32",
+    "nfct_conntrack_compare_t", "nfct_conntrack_compare",
 )
 
