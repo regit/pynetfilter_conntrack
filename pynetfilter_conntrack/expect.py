@@ -1,18 +1,19 @@
-from pynetfilter_conntrack import (Conntrack, ExpectEntry,
-    nfexp_callback_t,
-    nfexp_query, nfexp_callback_register,
-    nfexp_callback_unregister, nfexp_catch,
-    NFCT_Q_DUMP, NFCT_Q_FLUSH, NFCT_T_ALL, EXPECT,
-    NFCT_CB_STOLEN)
+from pynetfilter_conntrack import ExpectEntry,\
+    nfexp_callback_t,\
+    nfexp_query, nfexp_callback_register,\
+    nfexp_callback_unregister, nfexp_catch,\
+    NFCT_Q_DUMP, NFCT_Q_FLUSH, NFCT_T_ALL, EXPECT,\
+    NFCT_CB_STOLEN
 from pynetfilter_conntrack.ctypes_stdint import uint8_t
 from ctypes import byref
 from socket import AF_INET
 from pynetfilter_conntrack.ctypes_errno import get_errno
 from os import strerror
+from pynetfilter_conntrack.conntrack_base import ConntrackBase
 
-class Expect(Conntrack):
+class Expect(ConntrackBase):
     def __init__(self, subscriptions=0, subsys=EXPECT):
-        Conntrack.__init__(self, EXPECT, subscriptions)
+        ConntrackBase.__init__(self, subsys, subscriptions)
 
     def register_callback(self, callback, event_type=NFCT_T_ALL, data=None):
         """

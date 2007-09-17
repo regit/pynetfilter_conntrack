@@ -1,40 +1,18 @@
 from pynetfilter_conntrack import ConntrackEntry,\
-    nfct_new, nfct_destroy, nfct_open, nfct_close, nfct_query, \
+    nfct_new, nfct_destroy, nfct_query, \
     nfct_callback_t, nfct_callback_register, nfct_callback_unregister,\
     nfct_snprintf, nfct_catch, \
     CONNTRACK, NFCT_Q_DUMP, NFCT_T_ALL, NFCT_CB_STOLEN
+from pynetfilter_conntrack.conntrack_base import ConntrackBase
 from ctypes import byref
 from pynetfilter_conntrack.ctypes_stdint import uint8_t
 from os import strerror
 from pynetfilter_conntrack.ctypes_errno import get_errno
 from socket import AF_INET
 
-class Conntrack:
-    def __init__(self, subsys=CONNTRACK, subscriptions=0):
-        """
-        Create new conntrack object. May raise a RuntimeError.
-        """
-
-        # Callback things
-        self.callback = None
-        self.callback_arg = None
-
-        # Default value, needed by __del__ if an exception is raised in the constructor
-        self.conntrack = None
-        self.handle = None
-
-        # Open a conntrack handler
-        self.handle = nfct_open(subsys, subscriptions)
-        if not self.handle:
-            raise RuntimeError("nfct_new() failure: %s" % strerror(get_errno()))
-
-    def __del__(self):
-        """Destroy conntrack object"""
-        if 'handle' not in self.__dict__:
-            return
-        if not self.handle:
-            return
-        nfct_close(self.handle)
+class Conntrack(ConntrackBase):
+    def __init__(self, subscriptions=0, subsys=CONNTRACK):
+        ConntrackBase.__init__(self, subsys, subscriptions)
 
     def register_callback(self, callback, event_type=NFCT_T_ALL, data=None):
         """
