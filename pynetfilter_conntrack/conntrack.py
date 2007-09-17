@@ -6,8 +6,6 @@ from pynetfilter_conntrack import ConntrackEntry,\
 from pynetfilter_conntrack.conntrack_base import ConntrackBase
 from ctypes import byref
 from pynetfilter_conntrack.ctypes_stdint import uint8_t
-from os import strerror
-from pynetfilter_conntrack.ctypes_errno import get_errno
 from socket import AF_INET
 
 class Conntrack(ConntrackBase):
@@ -56,7 +54,7 @@ class Conntrack(ConntrackBase):
         """
         ret = nfct_query(self.handle, command, argument)
         if ret != 0:
-            raise RuntimeError("nfct_query() failure: %s" % strerror(get_errno()))
+            self._error('nfct_query')
 
     def catch(self, callback):
         """
@@ -66,7 +64,7 @@ class Conntrack(ConntrackBase):
         self.register_callback(callback)
         ret = nfct_catch(self.handle)
         if ret != 0:
-            raise RuntimeError("nfct_catch() failure: %s" % strerror(get_errno()))
+            self._error('nfct_catch')
         self.unregister_callback()
 
 __all__ = ("Conntrack", )

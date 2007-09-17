@@ -1,5 +1,7 @@
 from pynetfilter_conntrack import \
     nfct_open, nfct_close
+from pynetfilter_conntrack.ctypes_errno import get_errno
+from os import strerror
 
 class ConntrackBase(object):
     def __init__(self, subsys, subscriptions):
@@ -17,7 +19,12 @@ class ConntrackBase(object):
         # Open a conntrack handler
         self.handle = nfct_open(subsys, subscriptions)
         if not self.handle:
-            raise RuntimeError("nfct_new() failure: %s" % strerror(get_errno()))
+            self._error('nfct_new')
+
+    def _error(self, func_name):
+        errno = get_errno()
+        err_msg = strerror(errno)
+        raise RuntimeError("%s() failure: %s" % (func_name, err_msg))
 
     def __del__(self):
         """Destroy conntrack object"""
