@@ -48,9 +48,9 @@ class ConntrackEntry(object):
         """
         self._destroy = destroy
         self._handle = handle
-        self._conntrack = conntrack
+        self._sub_system = conntrack
         if not self._handle:
-            raise RuntimeError("Unable to clone conntrack entry (no more memory?)!")
+            raise RuntimeError("Empty conntrack entry handler")
         self._msgtype = msgtype
         self._attr = {}
 
@@ -115,7 +115,7 @@ class ConntrackEntry(object):
         """
         Destroy (kill) a connection in the conntrack table.
         """
-        self._conntrack.query(NFCT_Q_DESTROY, self._handle)
+        self.query(NFCT_Q_DESTROY, self._handle)
 
     def format(self, msg_output=NFCT_O_DEFAULT, msgtype=None, flags=NFCT_OF_SHOW_LAYER3):
         """
@@ -138,7 +138,7 @@ class ConntrackEntry(object):
         return buffer.value
 
     def _query(self, command):
-        self._conntrack.query(command, self._handle)
+        self._sub_system.query(command)
 
     def update(self):
         self._query(NFCT_Q_UPDATE)
