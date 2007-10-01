@@ -7,7 +7,7 @@ from pynetfilter_conntrack import \
     ATTRIBUTES, NFCT_Q_UPDATE, PF_INET, PF_INET6,\
     NFCT_Q_CREATE, NFCT_Q_DESTROY,\
     nfct_conntrack_compare_t, nfct_conntrack_compare,\
-    ctypes_ptr2uint, int32_to_uint32
+    ctypes_ptr2uint, int16_to_uint16, int32_to_uint32
 from ctypes import create_string_buffer
 from socket import ntohs, ntohl, htons, htonl
 from IPy import IP
@@ -31,7 +31,6 @@ SETTER = {
     128: nfct_set_attr,
 }
 
-NTOH = {8: None, 16: ntohs, 32: ntohl, 64: None, 128: None}
 HTON = {8: None, 16: htons, 32: htonl, 64: None, 128: None}
 
 class ConntrackEntry(EntryBase):
@@ -49,15 +48,19 @@ class ConntrackEntry(EntryBase):
         try:
             attrid, nbits = ATTRIBUTES[name]
             getter = GETTER[nbits]
-            ntoh = NTOH[nbits]
         except KeyError:
             raise AttributeError("ConntrackEntry object has no attribute '%s'" % name)
         value = getter(self._handle, attrid)
         if 32 < nbits:
             return ctypes_ptr2uint(value, nbits//8)
-        if ntoh and name not in ("mark", "timeout", "status"):
-            value = ntoh(value)
-        value = int32_to_uint32(value)
+
+        if nbits in (16, 32) and name not in ("mark", "timeout"):
+            if nbits == 16:
+                value = ntohs(value) & 0xFFFF
+                value = int16_to_uint16(value)
+            else:
+                value = ntohl(value) # & 0xFFFFFFFF
+                value = int32_to_uint32(value)
         if name in IPV4_ATTRIBUTES:
             value = IP(value, ipversion=4)
         return value
@@ -133,6 +136,8 @@ class ConntrackEntry(EntryBase):
             ip_src = self.orig_ipv4_src
         elif self.orig_l3proto == PF_INET6:
             ip_src = self.orig_ipv6_src
+        else:
+            ip_src = 0
         key = (self.orig_l3proto, ip_src,
                self.orig_l4proto, self.orig_port_src)
         return hash(key)

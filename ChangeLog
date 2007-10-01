@@ -8,6 +8,12 @@ Release 0.5
    use hash(entry) to get hash value. Hash is now a classic hash value and
    not a tuple of integers.
 
+Release 0.4.1
+-------------
+
+ * Fix ConntrackEntry.hashtuple for layer3 different than IPv4 and IPV6
+ * Use correct bitmask with ntohs() in ConntrackEntry._getAttr()
+
 Release 0.4
 -----------
 

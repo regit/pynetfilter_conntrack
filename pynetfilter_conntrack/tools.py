@@ -51,23 +51,29 @@ def ctypes_ptr2uint(ptr, size):
     return raw2long(raw, ctypes_ptr2uint.big_endian)
 ctypes_ptr2uint.big_endian = isBigEndian()
 
+def __int16_to_uint16_old(n):
+    if n < 0:
+        return 0x10000 + n
+    else:
+        return n
+
 def __int32_to_uint32_old(n):
-    """
-    Convert a signed integer to unsigned integer for python version lesser than 2.4.
-    """
     if n < 0:
         return 0x100000000 + n
-    return n
+    else:
+        return n
+
+def __int16_to_uint16_new(n):
+    return n & 0xFFFF
 
 def __int32_to_uint32_new(n):
-    """
-    Convert a signed integer to unsigned integer for python version greater or equal to 2.4.
-    """
     return n & 0xFFFFFFFF
 
 if sys.hexversion < 0x2040000:
+    int16_to_uint16 = __int16_to_uint16_old
     int32_to_uint32 = __int32_to_uint32_old
 else:
+    int16_to_uint16 = __int16_to_uint16_new
     int32_to_uint32 = __int32_to_uint32_new
 int32_to_uint32.__doc__ = """Convert a signed integer to unsigned integer.
 Examples:
@@ -79,5 +85,5 @@ Examples:
 1062723156
 """
 
-__all__ = ("raw2long", "ctypes_ptr2uint", "int32_to_uint32")
+__all__ = ("raw2long", "ctypes_ptr2uint", "int16_to_uint16", "int32_to_uint32")
 
