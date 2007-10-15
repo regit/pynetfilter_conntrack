@@ -1,7 +1,13 @@
 Dependencies
 ============
 
-* IPy
-  Debian package: python-ipy
-  http://software.inl.fr/trac/trac.cgi/wiki/IPy
+ * IPy 0.50+
+   http://software.inl.fr/trac/trac.cgi/wiki/IPy
+   Debian package: python-ipy
+ * libnetfilter_conntrack 0.0.50+ (January 2007)
+   http://www.netfilter.org/projects/libnetfilter_conntrack/
+ * Linux kernel: 2.6.14+
+   http://www.kernel.org/
+ * ctypes 1.0+ (only for Python < 2.5)
+   Debian package: python-ctypes
 
