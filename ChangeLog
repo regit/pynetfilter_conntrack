@@ -8,6 +8,11 @@ Release 0.5
    use hash(entry) to get hash value. Hash is now a classic hash value and
    not a tuple of integers.
 
+Release 0.4.2
+-------------
+
+ * Fix ConntrackEntry._getAttr() for Python 2.3 and big endian machine
+
 Release 0.4.1
 -------------
 
