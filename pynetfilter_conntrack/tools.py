@@ -1,13 +1,14 @@
 from ctypes import string_at
-import struct, sys
+from struct import pack, unpack
+from sys import hexversion
 
 def isBigEndian():
     """
     Get machine endian: True for big endian, False for little endian
     """
     native_value = 0x1234   # 16-bit value
-    native_str = struct.pack("@H", native_value)
-    bigendian_value = struct.unpack(">H", native_str)[0]
+    native_str = pack("@H", native_value)
+    bigendian_value = unpack(">H", native_str)[0]
     return (bigendian_value == native_value)
 
 def raw2long(data, big_endian):
@@ -69,7 +70,7 @@ def __int16_to_uint16_new(n):
 def __int32_to_uint32_new(n):
     return n & 0xFFFFFFFFL
 
-if sys.hexversion < 0x2040000:
+if hexversion < 0x2040000:
     int16_to_uint16 = __int16_to_uint16_old
     int32_to_uint32 = __int32_to_uint32_old
 else:
