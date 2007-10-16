@@ -20,11 +20,11 @@ def raw2long(data, big_endian):
     True
     >>> raw2long("\x2a\x10", False) == 0x102a
     True
-    >>> raw2long("\xff\x14\x2a\x10", True) == 0xff142a10
+    >>> raw2long("\xff\x14\x2a\x10", True) == 0xff142a10L
     True
     >>> raw2long("\x00\x01\x02\x03", False) == 0x3020100
     True
-    >>> raw2long("\xff\x14\x2a\x10\xab\x00\xd9\x0e", True) == 0xff142a10ab00d90e
+    >>> raw2long("\xff\x14\x2a\x10\xab\x00\xd9\x0e", True) == 0xff142a10ab00d90eL
     True
     >>> raw2long("\xff\xff\xff\xff\xff\xff\xff\xfe", True) == (2**64-2)
     True
@@ -34,7 +34,7 @@ def raw2long(data, big_endian):
         INDEXES = xrange(len(data)-1,-1,-1)
     else:
         INDEXES = xrange(len(data))
-    shift = 0
+    shift = 0L
     value = 0
     for index in INDEXES:
         byte = ord(data[index])
@@ -59,15 +59,15 @@ def __int16_to_uint16_old(n):
 
 def __int32_to_uint32_old(n):
     if n < 0:
-        return 0x100000000 + n
+        return 0x100000000L + n
     else:
-        return n
+        return long(n)
 
 def __int16_to_uint16_new(n):
-    return n & 0xFFFF
+    return n & 0xFFFFL
 
 def __int32_to_uint32_new(n):
-    return n & 0xFFFFFFFF
+    return n & 0xFFFFFFFFL
 
 if sys.hexversion < 0x2040000:
     int16_to_uint16 = __int16_to_uint16_old
@@ -82,7 +82,7 @@ Examples:
 3232244140L
 
 >>> int32_to_uint32(1062723156)
-1062723156
+1062723156L
 """
 
 __all__ = ("raw2long", "ctypes_ptr2uint", "int16_to_uint16", "int32_to_uint32")
