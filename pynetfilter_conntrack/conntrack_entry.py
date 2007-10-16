@@ -56,10 +56,10 @@ class ConntrackEntry(EntryBase):
 
         if nbits in (16, 32) and name not in ("mark", "timeout"):
             if nbits == 16:
-                value = ntohs(value) & 0xFFFF
+                value = ntohs(value)
                 value = int16_to_uint16(value)
             else:
-                value = ntohl(value) # & 0xFFFFFFFF
+                value = ntohl(value)
                 value = int32_to_uint32(value)
         if name in IPV4_ATTRIBUTES:
             value = IP(value, ipversion=4)
