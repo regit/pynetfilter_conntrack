@@ -64,7 +64,7 @@ def __int32_to_uint32_old(n):
         return long(n)
 
 def __int16_to_uint16_new(n):
-    return n & 0xFFFFL
+    return n & 0xFFFF
 
 def __int32_to_uint32_new(n):
     return n & 0xFFFFFFFFL
@@ -75,14 +75,23 @@ if sys.hexversion < 0x2040000:
 else:
     int16_to_uint16 = __int16_to_uint16_new
     int32_to_uint32 = __int32_to_uint32_new
-int32_to_uint32.__doc__ = """Convert a signed integer to unsigned integer.
+
+int16_to_uint16.__doc__ = """Convert a 16 bits signed integer to unsigned integer.
 Examples:
 
->>> int32_to_uint32(-1062723156)
-3232244140L
+>>> int16_to_uint16(10627)
+10627
+>>> int16_to_uint16(-10627)
+54909
+"""
+
+int32_to_uint32.__doc__ = """Convert a 32 bits signed integer to unsigned integer.
+Examples:
 
 >>> int32_to_uint32(1062723156)
 1062723156L
+>>> int32_to_uint32(-1062723156)
+3232244140L
 """
 
 __all__ = ("raw2long", "ctypes_ptr2uint", "int16_to_uint16", "int32_to_uint32")
