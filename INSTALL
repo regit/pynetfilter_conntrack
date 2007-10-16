@@ -1,6 +1,8 @@
 Dependencies
 ============
 
+ * Python 2.3+
+   http://www.python.org/
  * IPy 0.50+
    http://software.inl.fr/trac/trac.cgi/wiki/IPy
    Debian package: python-ipy

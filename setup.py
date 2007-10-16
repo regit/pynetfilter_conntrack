@@ -18,7 +18,7 @@ pynetfilter_conntrack = load_source("version", path.join("pynetfilter_conntrack"
 DESCRIPTION = "pynetfilter_conntrack is a Python binding of libnetfilter_conntrack"
 LONG_DESCRIPTION = open("README").read()
 KEYWORDS = "netfilter conntrack ctypes firewall"
-REQUIRES = ("ctypes>=0.9.6", "IPy>=0.42")
+REQUIRES = ("ctypes>=0.9.6", "IPy>=0.50")
 
 CLASSIFIERS = filter(None, map(str.strip,
 """
