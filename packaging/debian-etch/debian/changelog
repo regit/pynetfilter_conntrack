@@ -1,3 +1,9 @@
+pynetfilter-conntrack (0.4.2-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Pierre Chifflier <pollux@debian.org>  Tue, 20 May 2008 15:34:20 +0200
+
 pynetfilter-conntrack (0.4.1-1+etch1) unstable; urgency=low
 
   * New upstream release.
