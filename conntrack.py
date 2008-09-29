@@ -9,6 +9,20 @@ OUTPUT_FORMAT = {
     "xml": NFCT_O_XML,
 }
 
+def checkKernelModule(module_name, symbol):
+    allsyms = open('/proc/kallsyms')
+    try:
+        for line in allsyms:
+            if symbol in line:
+                print "Module %s is loaded: symbol %r is present" % (module_name, symbol)
+                return
+    finally:
+        allsyms.close()
+    print "Load kernel module %s" % module_name
+    exitcode = system('modprobe %s' % module_name)
+    if exitcode:
+        raise RuntimeError("modprobe error (exit code %s)" % exitcode)
+
 def main():
     if len(sys.argv) != 2 or sys.argv[1] not in OUTPUT_FORMAT:
         print >>sys.stderr, "usage: %s command" % sys.argv[0]
@@ -18,6 +32,8 @@ def main():
     mode = sys.argv[1]
     output = OUTPUT_FORMAT[mode]
 
+    checkKernelModule('nf_conntrack', 'nf_ct_cache')
+    checkKernelModule('nf_conntrack_netlink', 'ctnetlink_init')
     try:
         if mode == "xml":
             print '<?xml version="1.0" encoding="ISO-8859-1"?>'
