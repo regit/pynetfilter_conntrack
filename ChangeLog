@@ -1,8 +1,8 @@
 ChangeLog
 =========
 
-Release 0.5
------------
+Release 0.5 (2008-09-29)
+------------------------
 
  * New classes for EXPECT manipulation, Expect and ExpectEntry
  * Remove Conntrack.destroy_conntrack(), replaced by ConntrackEntry.destroy()
