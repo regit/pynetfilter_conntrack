@@ -97,7 +97,15 @@ class ConntrackEntry(EntryBase):
             return
         if '_handle' not in self.__dict__ or not self._handle:
             return
+        self.free()
+
+    def free(self):
+        """
+        Destroy the conntrack entry: free the memory.
+        Function called by the Python destructor.
+        """
         nfct_destroy(self._handle)
+        self._handle = None
 
     def destroy(self):
         """
