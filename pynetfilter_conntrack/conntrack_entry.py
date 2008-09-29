@@ -14,8 +14,12 @@ from IPy import IP
 from pynetfilter_conntrack.entry_base import EntryBase, BUFFER_SIZE
 from warnings import warn
 
-IPV4_ATTRIBUTES = set(("orig_ipv4_src", "orig_ipv4_dst",
-    "repl_ipv4_src", "repl_ipv4_dst"))
+IP_ATTRIBUTES = set((
+    "orig_ipv4_src", "orig_ipv4_dst",
+    "repl_ipv4_src", "repl_ipv4_dst",
+    "orig_ipv6_src", "orig_ipv6_dst",
+    "repl_ipv6_src", "repl_ipv6_dst",
+))
 
 GETTER = {
       8: nfct_get_attr_u8,
@@ -58,14 +62,14 @@ class ConntrackEntry(EntryBase):
         if 32 < nbits:
             return ctypes_ptr2uint(value, nbits//8)
 
-        if nbits in (16, 32) and name not in ("mark", "timeout"):
+        if nbits in (16, 32) and name not in ("mark", "timeout", "status"):
             if nbits == 16:
                 value = ntohs(value)
                 value = int16_to_uint16(value)
             else:
                 value = ntohl(value)
                 value = int32_to_uint32(value)
-        if name in IPV4_ATTRIBUTES:
+        if name in IP_ATTRIBUTES:
             value = IP(value, ipversion=4)
         return value
 
@@ -84,7 +88,7 @@ class ConntrackEntry(EntryBase):
     def __setattr__(self, name, value):
         if name in ATTRIBUTES:
             python_value = value
-            if name in IPV4_ATTRIBUTES:
+            if name in IP_ATTRIBUTES:
                 if isinstance(value, IP):
                     value = value.int()
                 else:

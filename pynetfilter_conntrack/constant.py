@@ -4,7 +4,7 @@ ATTRIBUTES = {
     "orig_ipv4_dst": (1, 32),
     "repl_ipv4_src": (2, 32),
     "repl_ipv4_dst": (3, 32),
-    "orig_ipv6_src": (4, 128),   # FIXME: type is ipv6,
+    "orig_ipv6_src": (4, 128),
     "orig_ipv6_dst": (5, 128),
     "repl_ipv6_src": (6, 128),
     "repl_ipv6_dst": (7, 128),
