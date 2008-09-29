@@ -10,8 +10,8 @@ Release 0.5
  * conntrack_entry.hashtuple is marked as depracted and will be removed in
    next major release. Use hash(entry) instead
 
-Release 0.4.2
--------------
+Release 0.4.2 (2007-10-16)
+--------------------------
 
  * Fix ConntrackEntry._getAttr() for Python 2.3
 
