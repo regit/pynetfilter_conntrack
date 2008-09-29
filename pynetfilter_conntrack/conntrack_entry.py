@@ -12,6 +12,7 @@ from ctypes import create_string_buffer
 from socket import ntohs, ntohl, htons, htonl
 from IPy import IP
 from pynetfilter_conntrack.entry_base import EntryBase, BUFFER_SIZE
+from warnings import warn
 
 IPV4_ATTRIBUTES = set(("orig_ipv4_src", "orig_ipv4_dst",
     "repl_ipv4_src", "repl_ipv4_dst"))
@@ -40,6 +41,9 @@ class ConntrackEntry(EntryBase):
         return ConntrackEntry(conntrack, handle)
 
     def __getattr__(self, name):
+        if name == 'hashtuple':
+            warn("entry.hashtuple is deprecated, use hash(entry)", category=DeprecationWarning, stacklevel=2)
+            return self.__hash__()
         if name not in self._attr:
             self._attr[name] = self._getAttr(name)
         return self._attr[name]
