@@ -6,15 +6,15 @@ BUFFER_SIZE = 1024 # bytes including nul byte
 
 class EntryBase(object):
     def __init__(self, conntrack, handle, msgtype=NFCT_T_UNKNOWN, destroy=True, attr=None):
-        if not self._handle:
+        if not handle:
             raise RuntimeError("Empty entry handler")
         if not attr:
             attr = {}
+        object.__setattr__(self, "_attr", attr)
         object.__setattr__(self, "_destroy", destroy)
         object.__setattr__(self, "_handle", handle)
         object.__setattr__(self, "_sub_system", conntrack)
         object.__setattr__(self, "_msgtype", msgtype)
-        object.__setattr__(self, "_attr", attr)
 
     def _error(self, func_name):
         errno = get_errno()

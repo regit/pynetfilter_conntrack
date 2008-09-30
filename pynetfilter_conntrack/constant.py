@@ -70,6 +70,9 @@ NFCT_O_XML = 1
 # output flags
 NFCT_OF_SHOW_LAYER3 = (1 << 0)
 
+# compare flags
+NFCT_MARK = (1 << 3)
+
 # query
 NFCT_Q_CREATE = 0
 NFCT_Q_UPDATE = 1
