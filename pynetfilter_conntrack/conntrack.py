@@ -1,12 +1,17 @@
 from pynetfilter_conntrack import ConntrackEntry,\
-    nfct_new, nfct_destroy, nfct_query, \
-    nfct_callback_t, nfct_callback_register, nfct_callback_unregister,\
-    nfct_snprintf, nfct_catch, \
+    nfct_query, nfct_callback_t, nfct_callback_register, \
+    nfct_callback_unregister, nfct_catch, \
     CONNTRACK, NFCT_Q_DUMP, NFCT_T_ALL, NFCT_CB_STOLEN
 from pynetfilter_conntrack.conntrack_base import ConntrackBase
 from ctypes import byref
 from pynetfilter_conntrack.ctypes_stdint import uint8_t
 from socket import AF_INET
+try:
+    from cnetfilter_conntrack import dump_table
+    HAS_CNETFILTER_CONNTRACK = True
+except ImportError:
+    HAS_CNETFILTER_CONNTRACK = False
+from IPy import IP
 
 class Conntrack(ConntrackBase):
     def __init__(self, subscriptions=0, subsys=CONNTRACK):
@@ -30,19 +35,32 @@ class Conntrack(ConntrackBase):
         self.callback_arg = None
 
     def dump_table(self, family=AF_INET, event_type=NFCT_T_ALL):
-        # Create a pointer to a 'uint8_t' of the address family
-        family = byref(uint8_t(family))
+        if HAS_CNETFILTER_CONNTRACK:
+            table = dump_table(self.handle, family)
 
-        def copyEntry(msgtype, ct, data):
-            copyEntry.ctlist.append(ConntrackEntry(self, ct, msgtype))
-            return NFCT_CB_STOLEN
-        copyEntry.ctlist = []
+            connections = []
+            for attr in table:
+                handle = attr.pop('handle')
+                for key, value in attr.iteritems():
+                    if "ipv4" in key:
+                        attr[key] = IP(value)
+                conn = ConntrackEntry(self, handle, attr=attr)
+                connections.append(conn)
+            return connections
+        else:
+            # Create a pointer to a 'uint8_t' of the address family
+            family = byref(uint8_t(family))
 
-        # Install callback, do the query, remove callback
-        self.register_callback(copyEntry, event_type)
-        self.query(NFCT_Q_DUMP, family)
-        self.unregister_callback()
-        return copyEntry.ctlist
+            def copyEntry(msgtype, ct, data):
+                copyEntry.ctlist.append(ConntrackEntry(self, ct, msgtype))
+                return NFCT_CB_STOLEN
+            copyEntry.ctlist = []
+
+            # Install callback, do the query, remove callback
+            self.register_callback(copyEntry, event_type)
+            self.query(NFCT_Q_DUMP, family)
+            self.unregister_callback()
+            return copyEntry.ctlist
 
     def query(self, command, argument):
         """
