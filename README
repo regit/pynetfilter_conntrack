@@ -3,7 +3,7 @@ pynetfilter_conntrack is a Python binding of this library.  The binding is the
 file pynetfilter_conntrack.py and you have also a clone of conntrack program:
 conntrack.py.
 
-Website: http://software.inl.fr/trac/trac.cgi/wiki/pynetfilter_conntrack
+Website: http://software.inl.fr/trac/wiki/pynetfilter_conntrack
 
 conntrack.py
 ============

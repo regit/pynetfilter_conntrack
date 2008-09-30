@@ -30,9 +30,13 @@ class ConntrackBase(object):
         """Destroy conntrack object"""
         if 'handle' not in self.__dict__:
             return
+        self.close()
+
+    def close(self):
         if not self.handle:
             return
         nfct_close(self.handle)
+        self.handle = None
 
 __all__ = ('ConntrackBase',)
 

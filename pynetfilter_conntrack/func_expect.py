@@ -1,4 +1,4 @@
-from pynetfilter_conntrack import nfct_handle_p, nfct_callback_t
+from pynetfilter_conntrack import nfct_handle_p
 from pynetfilter_conntrack.func import library
 from ctypes import (Structure, POINTER, CFUNCTYPE,
     c_int, c_void_p, c_char_p, c_uint)
