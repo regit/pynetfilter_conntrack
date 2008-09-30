@@ -1,4 +1,4 @@
-from pynetfilter_conntrack import ConntrackEntry,\
+from pynetfilter_conntrack import \
     nfexp_new, nfexp_destroy, nfexp_snprintf,\
     NFCT_O_DEFAULT, NFCT_OF_SHOW_LAYER3
 from ctypes import create_string_buffer
@@ -10,11 +10,7 @@ class ExpectEntry(EntryBase):
         handle = nfexp_new()
         return ExpectEntry(expect, handle)
 
-    def __del__(self):
-        if '_destroy' not in self.__dict__ or not self._destroy:
-            return
-        if '_handle' not in self.__dict__ or not self._handle:
-            return
+    def _free(self):
         nfexp_destroy(self._handle)
 
     def format(self, msg_output=NFCT_O_DEFAULT, msgtype=None, flags=NFCT_OF_SHOW_LAYER3):

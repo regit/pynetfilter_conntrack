@@ -5,14 +5,16 @@ from os import strerror
 BUFFER_SIZE = 1024 # bytes including nul byte
 
 class EntryBase(object):
-    def __init__(self, conntrack, handle, msgtype=NFCT_T_UNKNOWN, destroy=True):
-        self._destroy = destroy
-        self._handle = handle
-        self._sub_system = conntrack
+    def __init__(self, conntrack, handle, msgtype=NFCT_T_UNKNOWN, destroy=True, attr=None):
         if not self._handle:
             raise RuntimeError("Empty entry handler")
-        self._msgtype = msgtype
-        self._attr = {}
+        if not attr:
+            attr = {}
+        object.__setattr__(self, "_destroy", destroy)
+        object.__setattr__(self, "_handle", handle)
+        object.__setattr__(self, "_sub_system", conntrack)
+        object.__setattr__(self, "_msgtype", msgtype)
+        object.__setattr__(self, "_attr", attr)
 
     def _error(self, func_name):
         errno = get_errno()
@@ -28,9 +30,20 @@ class EntryBase(object):
     def __str__(self):
         return self.format()
 
+    def __del__(self):
+        if '_destroy' not in self.__dict__ or not self._destroy:
+            return
+        if '_handle' not in self.__dict__ or not self._handle:
+            return
+        self._free()
+        object.__setattr__(self, '_handle', None)
+
     # --- Abstract methods ---
 
     def format(self, **kw):
+        raise NotImplementedError()
+
+    def free(self):
         raise NotImplementedError()
 
 __all__ = ('EntryBase', 'BUFFER_SIZE')

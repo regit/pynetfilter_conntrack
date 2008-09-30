@@ -3,16 +3,15 @@ from pynetfilter_conntrack import \
     nfct_get_attr, nfct_get_attr_u8, nfct_get_attr_u16, nfct_get_attr_u32,\
     nfct_set_attr, nfct_set_attr_u8, nfct_set_attr_u16, nfct_set_attr_u32,\
     nfct_setobjopt,\
-    NFCT_O_DEFAULT, NFCT_O_XML, NFCT_OF_SHOW_LAYER3,\
-    ATTRIBUTES, NFCT_Q_UPDATE, PF_INET, PF_INET6,\
-    NFCT_Q_CREATE, NFCT_Q_DESTROY,\
+    NFCT_O_DEFAULT, NFCT_OF_SHOW_LAYER3,\
+    ATTRIBUTES, NFCT_Q_UPDATE, \
+    NFCT_Q_DESTROY, NFCT_MARK, \
     nfct_conntrack_compare_t, nfct_conntrack_compare,\
     ctypes_ptr2uint, int16_to_uint16, int32_to_uint32
 from ctypes import create_string_buffer
 from socket import ntohs, ntohl, htons, htonl
 from IPy import IP
 from pynetfilter_conntrack.entry_base import EntryBase, BUFFER_SIZE
-from warnings import warn
 
 IP_ATTRIBUTES = set((
     "orig_ipv4_src", "orig_ipv4_dst",
@@ -45,9 +44,6 @@ class ConntrackEntry(EntryBase):
         return ConntrackEntry(conntrack, handle)
 
     def __getattr__(self, name):
-        if name == 'hashtuple':
-            warn("entry.hashtuple is deprecated, use hash(entry)", category=DeprecationWarning, stacklevel=2)
-            return self.__hash__()
         if name not in self._attr:
             self._attr[name] = self._getAttr(name)
         return self._attr[name]
@@ -100,20 +96,12 @@ class ConntrackEntry(EntryBase):
         else:
             raise AttributeError("ConntrackEntry object has no attribute '%s'" % name)
 
-    def __del__(self):
-        if '_destroy' not in self.__dict__ or not self._destroy:
-            return
-        if '_handle' not in self.__dict__ or not self._handle:
-            return
-        self.free()
-
-    def free(self):
+    def _free(self):
         """
         Destroy the conntrack entry: free the memory.
         Function called by the Python destructor.
         """
         nfct_destroy(self._handle)
-        self._handle = None
 
     def destroy(self):
         """
@@ -146,17 +134,6 @@ class ConntrackEntry(EntryBase):
 
     def setobjopt(self, option):
         nfct_setobjopt(self._handle, option)
-
-    def __hash__(self):
-        if self.orig_l3proto == PF_INET:
-            ip_src = self.orig_ipv4_src
-        elif self.orig_l3proto == PF_INET6:
-            ip_src = self.orig_ipv6_src
-        else:
-            ip_src = 0
-        key = (self.orig_l3proto, ip_src,
-               self.orig_l4proto, self.orig_port_src)
-        return hash(key)
 
     def compare(self, other, use_layer3=True, use_layer4=True, use_mark=False):
         flags = 0
