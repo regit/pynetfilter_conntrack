@@ -10,6 +10,12 @@ struct filter_ipv4_t {
     struct in_addr last;
 };
 
+struct sort_t {
+    int enabled;
+    int order;
+    int attrid;
+};
+
 struct filter_t {
     int drop_time_wait;
 

@@ -9,12 +9,8 @@ from pynetfilter_conntrack.ctypes_stdint import uint8_t
 from socket import AF_INET
 try:
     from cnetfilter_conntrack import dump_table_ipv4
-    print "Use cnetfilter_conntrack"
-    import XYZ
     HAS_CNETFILTER_CONNTRACK = True
 except ImportError, err:
-    print "DON'T USE CNETFILTER_CONNTRACK"
-    print "ERROR: %s" % err
     HAS_CNETFILTER_CONNTRACK = False
 from IPy import IP
 
@@ -62,13 +58,15 @@ class Conntrack(ConntrackBase):
                 return False
         return True
 
-    def dump_table(self, family=AF_INET, event_type=NFCT_T_ALL, drop_networks=None):
+    def dump_table(self, family=AF_INET, event_type=NFCT_T_ALL, drop_networks=None, sort=None, reverse=False, start=0, size=None):
         if HAS_CNETFILTER_CONNTRACK:
             if family != AF_INET:
                 raise ValueError("cnetfilter_conntrack only supports IPv4")
             if drop_networks:
                 drop_networks = tuple((ip.int(), ip.broadcast().int()) for ip in drop_networks)
-            table = dump_table_ipv4(self.handle, drop_networks)
+            if not size:
+                size = 0
+            table, total = dump_table_ipv4(self.handle, drop_networks=drop_networks, sort=sort, reverse=reverse, start=start, size=size)
 
             connections = []
             for attr in table:
@@ -78,8 +76,14 @@ class Conntrack(ConntrackBase):
                         attr[key] = IP(value)
                 conn = ConntrackEntry(self, handle, attr=attr)
                 connections.append(conn)
-            return connections
+
+            return connections, total
         else:
+            if sort:
+                raise NotImplementedError("Python version of dump_table() doesn't support sorting")
+            if reverse:
+                raise NotImplementedError("Python version of dump_table() doesn't support reverse")
+
             # Create a pointer to a 'uint8_t' of the address family
             family = byref(uint8_t(family))
 
@@ -98,8 +102,15 @@ class Conntrack(ConntrackBase):
             self.unregister_callback()
             table = copyEntry.ctlist
 
+            # Truncated the list
+            total = len(connset)
+            if size is None:
+                connset = connset[start:]
+            else:
+                connset = connset[start:start+size]
+
             # Suppress unwanted entries
-            return table
+            return table, total
 
     def query(self, command, argument):
         """

@@ -5,9 +5,13 @@
 #include <Python.h>
 
 struct filter_t;
+struct sort_t;
 
 PyObject*
-cnetfilter_dump_table(struct nfct_handle *handle, struct filter_t *filter, u_int8_t family);
+cnetfilter_dump_table(
+    struct nfct_handle *handle, u_int8_t family,
+    unsigned long start, unsigned long size,
+    struct filter_t *filter, struct sort_t *sort);
 
 #endif
 

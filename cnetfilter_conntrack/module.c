@@ -2,10 +2,21 @@
 #include "dump.h"
 #include <Python.h>
 
-char dump_table_DOCSTR[] =
-"dump_table(handle, family=AF_INET) -> connection table\r\n"
+char dump_table_ipv4_DOCSTR[] =
+"dump_table_ipv4(handle, drop_networks=None, sort=None, reverse=False) -> connection table\r\n"
+"drop_networks is a tuple of (first_ip, last_ip) tuples where ips are long integers.\r\n"
+"sort is a string in: \"orig_ipv4_src\", \"orig_ipv4_dst\".\r\n"
 "Raise a ValueError on error.\r\n"
 "Returns a list a dict.\r\n";
+
+struct sort_attr_t {
+    const char* name;
+    int attrid;
+} sort_attributes[] = {
+    {"orig_ipv4_src", ATTR_ORIG_IPV4_SRC},
+    {"orig_ipv4_dst", ATTR_ORIG_IPV4_DST},
+    {NULL, 0}
+};
 
 static int
 parse_networks(struct filter_t *filter, PyObject* networks)
@@ -16,6 +27,9 @@ parse_networks(struct filter_t *filter, PyObject* networks)
     PyObject *lastobj;
     unsigned long ip;
     int err;
+
+    if (networks == Py_None)
+        return 0;
 
     if (!PyTuple_Check(networks)) {
         PyErr_Format(PyExc_TypeError,
@@ -70,10 +84,7 @@ parse_networks(struct filter_t *filter, PyObject* networks)
         if (ip == (unsigned long)-1 && PyErr_Occurred())
             return 1;
         filter->ipv4[index].last.s_addr = ip;
-
-        printf("NETWORK #%u: %u..%u\n", index, filter->ipv4[index].first.s_addr, filter->ipv4[index].last.s_addr);
     }
-    printf("TOTAL: %u\n", filter->nb_ipv4);
     return 0;
 
 error:
@@ -83,14 +94,23 @@ error:
 }
 
 static PyObject*
-dump_table_ipv4(PyObject* UNUSED(self), PyObject* args)
+dump_table_ipv4(PyObject* UNUSED(self), PyObject* args, PyObject* kwargs)
 {
     struct nfct_handle *handle = NULL;
     PyObject* networks = NULL;
     struct filter_t filter;
+    struct sort_t sort;
     PyObject *result;
+    int reverse;
+    unsigned long start;
+    unsigned long size;
+    const char* sort_name = NULL;
+    struct sort_attr_t *sort_it;
+    static char* kwnames[] = { "handle", "start", "size", "drop_networks", "sort", "reverse", NULL };
 
-    if (!PyArg_ParseTuple(args, "I|O:dump_table_ipv4", &handle, &networks))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs,
+    "I|kkOsI:dump_table_ipv4", kwnames,
+    &handle, &start, &size, &networks, &sort_name, &reverse))
         return NULL;
 
     filter.drop_time_wait = 1;
@@ -102,13 +122,32 @@ dump_table_ipv4(PyObject* UNUSED(self), PyObject* args)
         filter.ipv4 = NULL;
     }
 
-    result = cnetfilter_dump_table(handle, &filter, AF_INET);
+    sort.enabled = 0;
+    if (reverse)
+        sort.order = -1;
+    else
+        sort.order = 1;
+    if (sort_name) {
+        for (sort_it=sort_attributes; sort_it->name; sort_it++) {
+            if (strcmp(sort_it->name, sort_name) == 0) {
+                sort.enabled = 1;
+                sort.attrid = sort_it->attrid;
+                break;
+            }
+        }
+        if (!sort.enabled) {
+            PyErr_Format(PyExc_ValueError, "unknown sort attribute: \"%s\"", sort_name);
+            return NULL;
+        }
+    }
+
+    result = cnetfilter_dump_table(handle, AF_INET, start, size, &filter, &sort);
     PyMem_Free(filter.ipv4);
     return result;
 }
 
 static PyMethodDef moduleMethods[] = {
-    {"dump_table_ipv4", (PyCFunction)dump_table_ipv4, METH_VARARGS, dump_table_DOCSTR},
+    {"dump_table_ipv4", (PyCFunction)dump_table_ipv4, METH_VARARGS | METH_KEYWORDS, dump_table_ipv4_DOCSTR},
     {NULL, NULL, 0, NULL}
 };
 
