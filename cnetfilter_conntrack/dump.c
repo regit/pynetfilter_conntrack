@@ -115,14 +115,13 @@ cnetfilter_dump_table(
     }
 
     /* list of handles => list of dict */
-    size = dump.list_size;
-    if (size < start) {
+    if (dump.list_size < start) {
         start = 0;
         size = 0;
-    } else if (start + maxsize < size) {
-        size = start + maxsize;
+    } else if (start + maxsize < dump.list_size) {
+        size = maxsize;
     } else {
-        size = size - start;
+        size = dump.list_size - start;
     }
     result = cnetfilter_serialize(&dump.list[start], size);
     if (!result)
