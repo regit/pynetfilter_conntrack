@@ -1,8 +1,7 @@
-from pynetfilter_conntrack import ConntrackEntry,\
+from pynetfilter_conntrack import ConntrackEntry, Filter, \
     nfct_query, nfct_callback_t, nfct_callback_register, \
     nfct_callback_unregister, nfct_catch, \
-    CONNTRACK, NFCT_Q_DUMP, NFCT_T_ALL, NFCT_CB_CONTINUE, NFCT_CB_STOLEN, \
-    IPPROTO_TCP, TCP_CONNTRACK_TIME_WAIT, PF_INET, PF_INET6
+    CONNTRACK, NFCT_Q_DUMP, NFCT_T_ALL, NFCT_CB_CONTINUE, NFCT_CB_STOLEN
 from pynetfilter_conntrack.conntrack_base import ConntrackBase
 from ctypes import byref
 from pynetfilter_conntrack.ctypes_stdint import uint8_t
@@ -35,38 +34,14 @@ class Conntrack(ConntrackBase):
         self.callback = None
         self.callback_arg = None
 
-    def filterConnection(self, conn, filter):
-        # Ignore TCP connection in state TIME_WAIT
-        if (conn.orig_l4proto == IPPROTO_TCP) \
-        and (conn.tcp_state == TCP_CONNTRACK_TIME_WAIT):
-            return False
-
-        # Get source and destination IP (v4 or v6) addresses
-        l3proto = conn.orig_l3proto
-        if l3proto == PF_INET:
-            ip_src = conn.orig_ipv4_src
-            ip_dst = conn.orig_ipv4_dst
-        elif l3proto == PF_INET6:
-            ip_src = conn.orig_ipv6_src
-            ip_dst = conn.orig_ipv6_dst
-        else:
-            return True
-
-        # Ignore IP address in self.filter
-        for network in filter:
-            if (ip_src in network) or (ip_dst in network):
-                return False
-        return True
-
-    def dump_table(self, family=AF_INET, event_type=NFCT_T_ALL, drop_networks=None, sort=None, reverse=False, start=0, size=None):
+    def dump_table(self, family=AF_INET, event_type=NFCT_T_ALL, filter=None):
+        if not filter:
+            filter = Filter()
         if HAS_CNETFILTER_CONNTRACK:
             if family != AF_INET:
                 raise ValueError("cnetfilter_conntrack only supports IPv4")
-            if drop_networks:
-                drop_networks = tuple((ip.int(), ip.broadcast().int()) for ip in drop_networks)
-            if not size:
-                size = 0
-            table, total = dump_table_ipv4(self.handle, drop_networks=drop_networks, sort=sort, reverse=reverse, start=start, size=size)
+            options = filter.createCNetfilterOptions()
+            table, total = dump_table_ipv4(self.handle, **options)
 
             connections = []
             for attr in table:
@@ -79,17 +54,12 @@ class Conntrack(ConntrackBase):
 
             return connections, total
         else:
-            if sort:
-                raise NotImplementedError("Python version of dump_table() doesn't support sorting")
-            if reverse:
-                raise NotImplementedError("Python version of dump_table() doesn't support reverse")
-
             # Create a pointer to a 'uint8_t' of the address family
             family = byref(uint8_t(family))
 
             def copyEntry(msgtype, conntrack, data):
                 conn = ConntrackEntry(self, conntrack, msgtype)
-                if not self.filterConnection(conn, drop_networks):
+                if not filter.filterConnection(conn):
                     conn._destroy = False
                     return NFCT_CB_CONTINUE
                 copyEntry.ctlist.append(conn)
@@ -100,17 +70,17 @@ class Conntrack(ConntrackBase):
             self.register_callback(copyEntry, event_type)
             self.query(NFCT_Q_DUMP, family)
             self.unregister_callback()
-            table = copyEntry.ctlist
+            connset = copyEntry.ctlist
+
+            # Sort the list
+            filter.sortTable(connset)
 
             # Truncated the list
             total = len(connset)
-            if size is None:
-                connset = connset[start:]
-            else:
-                connset = connset[start:start+size]
+            connset = filter.truncate(connset)
 
             # Suppress unwanted entries
-            return table, total
+            return connset, total
 
     def query(self, command, argument):
         """
