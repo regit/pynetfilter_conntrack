@@ -1,14 +1,13 @@
-#include <Python.h>
-#include <stdbool.h>
-#include <sys/ptrace.h>
-#include <libnetfilter_conntrack/libnetfilter_conntrack.h>
+#include "dump.h"
+#include "filter.h"   /* UNUSED */
 
-#define UNUSED(arg) arg __attribute__((unused))
+int cnetfilter_filter(struct nf_conntrack *ct, struct filter_t *filter);
 
 /* from longobject.c */
 #define IS_LITTLE_ENDIAN (int)*(unsigned char*)&one
 
 typedef struct {
+    struct filter_t* filter;
     PyObject* table;
     int err;
 } dump_table_t;
@@ -77,6 +76,11 @@ callback(enum nf_conntrack_msg_type UNUSED(type), struct nf_conntrack *ct, void 
     PyObject *dict;
     uint8_t proto3, proto4;
 
+    if (cnetfilter_filter(ct, dump->filter)) {
+            /* drop the connection */
+            return NFCT_CB_CONTINUE;
+    }
+
     dict = PyDict_New();
     if (!dict)
         goto error;
@@ -101,7 +105,7 @@ callback(enum nf_conntrack_msg_type UNUSED(type), struct nf_conntrack *ct, void 
             goto error;
         if (add_key(dict, "orig_ipv4_dst", get_attr32(ct, ATTR_ORIG_IPV4_DST, 1)))
             goto error;
-#ifdef UNUSED
+#ifdef EXTRAFIELDS
         if (add_key(dict, "repl_ipv4_src", get_attr32(ct, ATTR_REPL_IPV4_SRC, 1)))
             goto error;
         if (add_key(dict, "repl_ipv4_dst", get_attr32(ct, ATTR_REPL_IPV4_DST, 1)))
@@ -112,7 +116,7 @@ callback(enum nf_conntrack_msg_type UNUSED(type), struct nf_conntrack *ct, void 
             goto error;
         if (add_key(dict, "orig_ipv6_dst", get_attr128(ct, ATTR_ORIG_IPV6_DST)))
             goto error;
-#ifdef UNUSED
+#ifdef EXTRAFIELDS
         if (add_key(dict, "repl_ipv6_src", get_attr128(ct, ATTR_REPL_IPV6_SRC)))
             goto error;
         if (add_key(dict, "repl_ipv6_dst", get_attr128(ct, ATTR_REPL_IPV6_DST)))
@@ -128,7 +132,7 @@ callback(enum nf_conntrack_msg_type UNUSED(type), struct nf_conntrack *ct, void 
             goto error;
         if (add_key(dict, "orig_port_dst", get_attr16(ct, ATTR_ORIG_PORT_DST, 1)))
             goto error;
-#ifdef UNUSED
+#ifdef EXTRAFIELDS
         if (add_key(dict, "repl_port_src", get_attr16(ct, ATTR_REPL_PORT_SRC, 1)))
             goto error;
         if (add_key(dict, "repl_port_dst", get_attr16(ct, ATTR_REPL_PORT_DST, 1)))
@@ -137,7 +141,7 @@ callback(enum nf_conntrack_msg_type UNUSED(type), struct nf_conntrack *ct, void 
         if (proto4 == IPPROTO_TCP) {
             if (add_key(dict, "tcp_state", get_attr16(ct, ATTR_TCP_STATE, 1)))
                 goto error;
-#ifdef UNUSED
+#ifdef EXTRAFIELDS
             if (add_key(dict, "tcp_flags_orig", get_attr8(ct, ATTR_TCP_FLAGS_ORIG)))
                 goto error;
             if (add_key(dict, "tcp_flags_repl", get_attr8(ct, ATTR_TCP_FLAGS_REPL)))
@@ -153,7 +157,7 @@ callback(enum nf_conntrack_msg_type UNUSED(type), struct nf_conntrack *ct, void 
             goto error;
         if (add_key(dict, "icmp_code", get_attr8(ct, ATTR_ICMP_CODE)))
             goto error;
-#ifdef UNUSED
+#ifdef EXTRAFIELDS
         if (add_key(dict, "icmp_id", get_attr16(ct, ATTR_ICMP_ID, 1)))
             goto error;
 #endif
@@ -173,7 +177,7 @@ callback(enum nf_conntrack_msg_type UNUSED(type), struct nf_conntrack *ct, void 
     if (add_key(dict, "repl_counter_bytes", get_attr64(ct, ATTR_REPL_COUNTER_BYTES)))
         goto error;
 
-#ifdef UNUSED
+#ifdef EXTRAFIELDS
     if (add_key(dict, "use", get_attr32(ct, ATTR_USE, 1)))
         goto error;
 
@@ -229,29 +233,21 @@ error:
     return NFCT_CB_STOP;
 }
 
-char dump_table_DOCSTR[] =
-"dump_table(handle, family=AF_INET) -> connection table\r\n"
-"Raise a ValueError on error.\r\n"
-"Returns a list a dict.\r\n";
-
-static PyObject*
-dump_table(PyObject* UNUSED(self), PyObject *args)
+PyObject*
+cnetfilter_dump_table(struct nfct_handle *handle, struct filter_t *filter, u_int8_t family)
 {
-    struct nfct_handle *handle = NULL;
-    u_int8_t family = AF_INET;
     int event_type = NFCT_T_ALL;
     int ret;
+
+    /* prepare our object */
     dump_table_t dump;
-
-
-    if (!PyArg_ParseTuple(args, "I|b", &handle, &family))
-        return NULL;
-
+    dump.filter = filter;
     dump.err = 0;
     dump.table = PyList_New(0);
     if (!dump.table)
         return NULL;
 
+    /* dump connections (include the filter in the callback) */
     (void)nfct_callback_register(handle, event_type, callback, &dump);
     ret = nfct_query(handle, NFCT_Q_DUMP, &family);
     if (dump.err) {
@@ -262,23 +258,12 @@ dump_table(PyObject* UNUSED(self), PyObject *args)
         goto error;
     }
     (void)nfct_callback_unregister(handle);
+
+    /* return the list of dict */
     return dump.table;
 
 error:
     Py_XDECREF(dump.table);
     return NULL;
-}
-
-static PyMethodDef moduleMethods[] = {
-    {"dump_table", (PyCFunction)dump_table, METH_VARARGS | METH_KEYWORDS, dump_table_DOCSTR},
-    {NULL, NULL, 0, NULL}
-};
-
-PyMODINIT_FUNC initcnetfilter_conntrack(void)
-{
-    (void)Py_InitModule3(
-        "cnetfilter_conntrack",
-        moduleMethods,
-        "Python binding of libnetfilter_conntrack written in C");
 }
 

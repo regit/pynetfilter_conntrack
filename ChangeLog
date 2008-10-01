@@ -7,9 +7,10 @@ Release 0.5 (2008-09-29)
  * New classes for EXPECT manipulation, Expect and ExpectEntry
  * Remove Conntrack.destroy_conntrack(), replaced by ConntrackEntry.destroy()
  * ConntrackEntry IP (v4 and v6) attributes are now IPy.IP objects
- * conntrack_entry.hashtuple is marked as depracted and will be removed in
-   next major release. Use hash(entry) instead
+ * Remove hashtuple attribute from ConntrackEntry
  * BUGFIX: Don't convert endian (ntohl) when reading entry.status value
+ * Write cnetfilter_conntrack: Python binding of the
+   libnetfilter_conntrack library written in C
 
 Release 0.4.2 (2007-10-16)
 --------------------------
