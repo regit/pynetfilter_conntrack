@@ -1,9 +1,11 @@
+=====================
+pynetfilter_conntrack
+=====================
+
 libnetfilter_conntrack is a library to manage Linux firewall NetFilter.
 pynetfilter_conntrack is a Python binding of this library.  The binding is the
 file pynetfilter_conntrack.py and you have also a clone of conntrack program:
 conntrack.py.
-
-Website: http://software.inl.fr/trac/wiki/pynetfilter_conntrack
 
 conntrack.py
 ============
