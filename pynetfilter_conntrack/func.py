@@ -3,7 +3,7 @@ from ctypes import Structure, cdll, POINTER, CFUNCTYPE,\
 from pynetfilter_conntrack.ctypes_stdint import uint8_t, uint16_t, uint32_t
 
 # Open the dynamic library
-library = cdll.LoadLibrary("libnetfilter_conntrack.so.1")
+library = cdll.LoadLibrary("libnetfilter_conntrack.so")
 
 #--------------------------------------------------------------------------
 # Define nf_conntrack_p and nfct_handle_p: pointer to fake structures
