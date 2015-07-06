@@ -198,7 +198,7 @@ nfct_setobjopt.restype = c_int
 # int nfct_conntrack_compare(struct nfct_conntrack *ct1,
 #                            struct nfct_conntrack *ct2,
 #                            struct nfct_conntrack_compare *cmp);
-nfct_conntrack_compare = library.nfct_conntrack_compare
+nfct_conntrack_compare = library.nfct_cmp
 nfct_conntrack_compare.argtypes = (nf_conntrack_p, nf_conntrack_p, nfct_conntrack_compare_p)
 nfct_conntrack_compare.restype = c_int
 
