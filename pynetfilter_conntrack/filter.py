@@ -27,9 +27,10 @@ class Filter:
             return True
 
         # Ignore IP address in self.filter
-        for network in self.drop_networks:
-            if (ip_src in network) or (ip_dst in network):
-                return False
+        if self.drop_networks:
+            for network in self.drop_networks:
+                if (ip_src in network) or (ip_dst in network):
+                    return False
         return True
 
     def createCNetfilterOptions(self):
