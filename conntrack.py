@@ -32,14 +32,14 @@ def main():
     mode = sys.argv[1]
     output = OUTPUT_FORMAT[mode]
 
-    checkKernelModule('nf_conntrack', 'nf_ct_cache')
-    checkKernelModule('nf_conntrack_netlink', 'ctnetlink_init')
+    checkKernelModule('nf_conntrack', 'nf_ct_attach')
+    checkKernelModule('nf_conntrack_netlink', 'ctnetlink_net_init')
     try:
         if mode == "xml":
             print '<?xml version="1.0" encoding="ISO-8859-1"?>'
             print '<flows>'
         nf = Conntrack()
-        table = nf.dump_table(AF_INET)
+        (table, count) = nf.dump_table(AF_INET)
         for entry in table:
             print entry.format(output)
         if mode == "xml":
