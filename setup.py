@@ -16,7 +16,7 @@ else:
 pynetfilter_conntrack = load_source("version", path.join("pynetfilter_conntrack", "version.py"))
 
 DESCRIPTION = "pynetfilter_conntrack is a Python binding of libnetfilter_conntrack"
-LONG_DESCRIPTION = open("README").read() + open("INSTALL").read() + open("ChangeLog").read()
+LONG_DESCRIPTION = open("README.rst").read() + open("INSTALL").read() + open("ChangeLog").read()
 KEYWORDS = "netfilter conntrack ctypes firewall"
 REQUIRES = ("ctypes>=0.9.6", "IPy>=0.50")
 
