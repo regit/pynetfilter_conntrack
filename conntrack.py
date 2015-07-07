@@ -2,6 +2,7 @@
 
 from pynetfilter_conntrack import Conntrack, NFCT_O_DEFAULT, NFCT_O_XML
 from socket import AF_INET
+from subprocess import call
 import sys
 
 OUTPUT_FORMAT = {
@@ -19,9 +20,9 @@ def checkKernelModule(module_name, symbol):
     finally:
         allsyms.close()
     print "Load kernel module %s" % module_name
-    exitcode = system('modprobe %s' % module_name)
+    exitcode = call("modprobe %s" % (module_name), shell = True)
     if exitcode:
-        raise RuntimeError("modprobe error (exit code %s)" % exitcode)
+        raise RuntimeError("modprobe error (exit code %d)" % exitcode)
 
 def main():
     if len(sys.argv) != 2 or sys.argv[1] not in OUTPUT_FORMAT:
