@@ -15,8 +15,10 @@ library = cdll.LoadLibrary(util.find_library("netfilter_conntrack"))
 #
 #nf_conntrack_p = POINTER(nf_conntrack)
 #nfct_handle_p = POINTER(nfct_handle)
-nf_conntrack_p = c_int
-nfct_handle_p = c_int
+#nf_conntrack_p = c_int
+#nfct_handle_p = c_int
+nf_conntrack_p = c_void_p
+nfct_handle_p = c_void_p
 
 class nfct_conntrack_compare_t(Structure):
     _fields_ = (
@@ -33,7 +35,7 @@ nfct_conntrack_compare_p = POINTER(nfct_conntrack_compare_t)
 #              void *data)
 #
 # Callback type
-nfct_callback_t = CFUNCTYPE(c_int, c_int, nf_conntrack_p, c_void_p)
+nfct_callback_t = CFUNCTYPE(c_int, c_uint, nf_conntrack_p, c_void_p)
 
 #--------------------------------------------------------------------------
 # struct nf_conntrack *nfct_new(void): Allocate a new conntrack
@@ -81,7 +83,7 @@ nfct_close.restype = c_int
 # On error, -1 is returned and errno is explicitely set. On success, 0
 # is returned
 nfct_query = library.nfct_query
-nfct_query.argtypes = (nfct_handle_p, c_int, c_void_p)
+nfct_query.argtypes = (nfct_handle_p, c_uint, c_void_p)
 nfct_query.restype = c_int
 
 #--------------------------------------------------------------------------
@@ -93,7 +95,7 @@ nfct_query.restype = c_int
 #				             void *data);
 # Register callback.
 nfct_callback_register = library.nfct_callback_register
-nfct_callback_register.argtypes = (nfct_handle_p, c_int, nfct_callback_t, c_void_p)
+nfct_callback_register.argtypes = (nfct_handle_p, c_uint, nfct_callback_t, c_void_p)
 nfct_callback_register.restype = c_int
 
 #--------------------------------------------------------------------------
