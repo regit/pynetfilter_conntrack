@@ -24,9 +24,14 @@ class Conntrack(ConntrackBase):
         return: NFCT_CB_CONTINUE, NFCT_CB_FAILURE, NFCT_CB_STOP,
         or NFCT_CB_STOLEN (like continue, but ct is not freed).
         """
+        self.event_type = event_type
         self.callback = nfct_callback_t(callback)
         self.callback_arg = data
-        nfct_callback_register(self.handle, event_type, self.callback, self.callback_arg)
+        ret = nfct_callback_register(self.handle, self.event_type, self.callback, self.callback_arg)
+        if ret == -1:
+            self._error('nfct_callback_register')
+        elif ret != 0:
+            self._error('nfct_callback_register unknown return code')
 
     def unregister_callback(self):
         """Unregister callback"""
@@ -90,9 +95,13 @@ class Conntrack(ConntrackBase):
 
         May raise a RuntimeError.
         """
-        ret = nfct_query(self.handle, command, argument)
-        if ret != 0:
+        self.query_type = command
+
+        ret = nfct_query(self.handle, self.query_type, byref(argument))
+        if ret == -1:
             self._error('nfct_query')
+        elif ret != 0:
+            self._error('nfct_query unknown return code')
 
     def catch(self, callback):
         """

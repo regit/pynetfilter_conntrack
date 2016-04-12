@@ -16,9 +16,12 @@ class ConntrackBase(object):
         self.conntrack = None
         self.handle = None
 
+        self.subsys = subsys
+        self.subscriptions = subscriptions
+
         # Open a conntrack handler
-        self.handle = nfct_open(subsys, subscriptions)
-        if not self.handle:
+        self.handle = nfct_open(self.subsys, self.subscriptions)
+        if self.handle == None:
             self._error('nfct_new')
 
     def _error(self, func_name):
