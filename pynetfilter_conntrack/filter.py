@@ -8,6 +8,7 @@ class Filter:
         self.reverse = False
         self.sort = "orig_ipv4_src"
         self.drop_networks = None
+        self.select_networks = None
 
     def filterConnection(self, conn):
         # Ignore TCP connection in state TIME_WAIT
@@ -31,6 +32,14 @@ class Filter:
             for network in self.drop_networks:
                 if (ip_src in network) or (ip_dst in network):
                     return False
+
+        # Select only from given networks
+        if self.select_networks:
+            for network in self.select_networks:
+                if (ip_src in network) or (ip_dst in network):
+                    return True
+            return False
+
         return True
 
     def createCNetfilterOptions(self):
